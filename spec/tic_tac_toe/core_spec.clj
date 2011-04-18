@@ -91,13 +91,33 @@
                                               :o :x nil])))
 
           (it "wins if it can"
-              (should= [:x :x :x :o nil nil nil nil :o]
-                       (move [:x :x nil :o nil nil nil nil :o]))
+              (should= [:x :x :x 
+                        :o nil nil 
+                        nil nil :o]
+                       (move [:x :x nil 
+                              :o nil nil 
+                              nil nil :o]))
               (should= [:x :o nil 
                         :o :x :o 
                         :o :x :x]
                        (move [:x :o nil 
                               :o nil :o 
                               :o :x :x])))
+
+          (it "blocks if it needs to"
+              (should= [:o :o :x
+                        :x nil nil
+                        nil :x nil]
+                       (move [:o :o nil
+                              :x nil nil
+                              nil :x nil])))
+
+          (it "chooses winning over blocking"
+              (should= [nil nil nil 
+                        :o :o nil
+                        :x :x :x]
+                       (move [nil nil nil 
+                              :o :o nil
+                              :x :x nil])))
           )
 
