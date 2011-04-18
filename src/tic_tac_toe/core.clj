@@ -22,3 +22,14 @@
 (defn winner [board]
   "Returns the keyword for the winner, if any, otherwise returns nil"
   (three-in-a-row (concat (rows board) (columns board) (diagonals board))))
+
+
+(defn- indexed-board [board]
+  (map vector (iterate inc 0) board))
+
+(defn empty-cells [board] 
+  (map first (filter #(nil? (second %)) (indexed-board board))))
+
+(defn move [board] 
+  "Returns new board with move marked"
+  board)
