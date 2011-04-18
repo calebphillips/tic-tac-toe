@@ -31,5 +31,5 @@
   (map first (filter #(nil? (second %)) (indexed-board board))))
 
 (defn move [board] 
-  "Returns new board with move marked"
-  board)
+  "Returns new board with computer's move marked"
+  (first (filter winner (map #(assoc-in board [%] :x) (empty-cells board)))))

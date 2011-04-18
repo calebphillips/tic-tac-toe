@@ -82,7 +82,7 @@
                                     :x :o :o]))))
 
 (describe "Making a move" 
-          (it "find empty cells"
+          (it "finds empty cells"
               (should= [0 1 2 3 4 5 6 7 8] (empty-cells (repeat 9 nil)))
               (should= [2 3 4 5 6 7 8] (empty-cells (concat [:x :x] (repeat 7 nil))))
               (should= [8] (empty-cells (concat (repeat 8 :x) [nil])))
@@ -90,8 +90,14 @@
                                               :o nil :x,
                                               :o :x nil])))
 
-          ; (it "wins if it can"
-              ; (should= [:x :x :x :o nil nil nil nil :o]
-                       ; (move [:x :x nil :o nil nil nil nil :o])))
+          (it "wins if it can"
+              (should= [:x :x :x :o nil nil nil nil :o]
+                       (move [:x :x nil :o nil nil nil nil :o]))
+              (should= [:x :o nil 
+                        :o :x :o 
+                        :o :x :x]
+                       (move [:x :o nil 
+                              :o nil :o 
+                              :o :x :x])))
           )
 
