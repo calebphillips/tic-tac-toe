@@ -5,7 +5,7 @@
 (describe "Checking for a winner"
           (it "detects horizontal wins"
               (should= :x (winner [:x :x :x,
-                                   :o :x :o,
+                                   :x :o :o,
                                    :o :o :x]))
 
               (should= :x (winner [:o :x :o,
