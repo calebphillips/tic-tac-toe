@@ -94,13 +94,13 @@
               (should= [:x :x :x 
                         :o nil nil 
                         nil nil :o]
-                       (move [:x :x nil 
+                       (move-x [:x :x nil 
                               :o nil nil 
                               nil nil :o]))
               (should= [:x :o nil 
                         :o :x :o 
                         :o :x :x]
-                       (move [:x :o nil 
+                       (move-x [:x :o nil 
                               :o nil :o 
                               :o :x :x])))
 
@@ -108,7 +108,7 @@
               (should= [:o :o :x
                         :x nil nil
                         nil :x nil]
-                       (move [:o :o nil
+                       (move-x [:o :o nil
                               :x nil nil
                               nil :x nil])))
 
@@ -116,8 +116,12 @@
               (should= [nil nil nil 
                         :o :o nil
                         :x :x :x]
-                       (move [nil nil nil 
+                       (move-x [nil nil nil 
                               :o :o nil
                               :x :x nil])))
+
+          (it "makes some move if neither win or block"
+              (should (some #(= :x %)
+                       (move-x [nil nil nil nil :o nil nil nil nil]))))
           )
 

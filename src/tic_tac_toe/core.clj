@@ -39,12 +39,44 @@
 (defn find-x-win [board]
   (first (find-win-for board :x)))
 
-(defn find-block [board]
-  (assoc-in board [(second (find-win-for board :o))] :x))
+(defn find-x-block [board]
+  (let [win-for-o (second (find-win-for board :o))]
+    (when win-for-o
+      (assoc-in board [win-for-o] :x))))
 
-(defn move [board] 
+(defn find-killer-x-move [board]
+  (assoc-in board [(first (empty-cells board))] :x))
+
+(defn move-x [board] 
   "Returns new board with computer's move marked"
   (let [winning-move (find-x-win board)]
     (if winning-move
       winning-move
-      (find-block board))))
+      (let [blocking-move (find-x-block board)]
+        (if blocking-move
+          blocking-move
+          (find-killer-x-move board))))))
+
+(defn move-o [board position]
+  (assoc-in board [position] :o))
+
+(defn- format-board [board]
+  board)
+
+(defn- init-board []
+  (vec (repeat 9 nil)))
+
+(defn game []
+  (loop [board (init-board) the-winner nil]
+    (if the-winner
+      (do 
+        (println (str the-winner " won"))
+        (println (format-board board)))
+      (do
+        (println (format-board board))
+        (let [board (move-o board (Integer. (read-line)))]
+          (println (format-board board))
+          (if (winner board)
+            (recur board (winner board))
+            (let [board (move-x board)]
+              (recur board (winner board)))))))))
