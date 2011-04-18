@@ -16,21 +16,6 @@
       (filter #(= 3 (count %))
               (apply concat (map (partial partition-by identity) colls))))))
 
-(defn horizontal-winner [board]
-  (three-in-a-row (rows board)))
-
-(defn vertical-winner [board]
-  (three-in-a-row (columns board)))
-
-(defn diagonal-winner [board]
-  (three-in-a-row (diagonals board)))
-
 (defn winner [board]
   "Returns the keyword for the winner, if any, otherwise returns nil"
-  (let [hw (horizontal-winner board)
-        vw (vertical-winner board)
-        dw (diagonal-winner board)]
-    (cond hw hw
-          vw vw
-          dw dw
-          :else nil)))
+  (three-in-a-row (concat (rows board) (columns board) (diagonals board))))
