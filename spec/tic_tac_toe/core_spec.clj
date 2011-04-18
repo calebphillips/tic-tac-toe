@@ -55,10 +55,14 @@
                                    :o :x :o]))
               )
 
-          ; (it "detects diagonal wins"
-              ; (should= :x (winner [:x :o :o
-                                   ; :o :x :o
-                                   ; :o :o :x]))
-              ; )
+          (it "detects diagonal wins"
+              (should= :x (winner [:x :o :o
+                                   :o :x :o
+                                   :o :o :x]))
+
+              (should= :o (winner [:x :x :o
+                                   :x :o :x
+                                   :o :x :x]))
+              )
 
           )
