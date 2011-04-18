@@ -11,10 +11,13 @@
     (map #(for [n %] (nth board n)) coords)))
 
 (defn three-in-a-row [colls]
+  "Takes a collection of collections and returns the value of the first"
+  "collection, if any that contains three of the same value"
   (first 
     (first
       (filter #(= 3 (count %))
-              (apply concat (map (partial partition-by identity) colls))))))
+              (remove #(some nil? %) 
+                      (apply concat (map #(partition-by identity %) colls)))))))
 
 (defn winner [board]
   "Returns the keyword for the winner, if any, otherwise returns nil"
