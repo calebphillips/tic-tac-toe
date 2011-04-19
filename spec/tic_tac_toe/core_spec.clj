@@ -76,6 +76,10 @@
 
           (it "detects when there is no winner yet"
               (should= nil (winner (repeat 9 nil)))
+
+              (should= nil (winner [:x nil :X
+                                    :o :o nil
+                                    :x nil :o]))
               
               (should= nil (winner [:x :o :o
                                     :o :x :x
@@ -123,6 +127,37 @@
           (it "makes some move if neither win or block"
               (should (some #(= :x %)
                        (move-x [nil nil nil nil :o nil nil nil nil]))))
+
+          (it "chooses the middle if available"
+              (should= [:o  nil nil
+                        nil :x  nil
+                        nil nil nil]
+                       (move-x [:o  nil nil
+                                nil nil nil
+                                nil nil nil])))
+
+          (it "chooses a corner if the middle is taken"
+              (should= [:x  nil nil
+                        nil :o  nil
+                        nil nil nil]
+                       (move-x [nil nil nil
+                                nil :o  nil
+                                nil nil nil]))
+              
+              (should= [:x  nil :x
+                        nil :o  nil
+                        nil nil nil]
+                       (move-x [:x  nil nil
+                                nil :o  nil
+                                nil nil nil])) 
+
+              (should= [:o  nil :x
+                        nil :x  nil
+                        nil :o nil]
+                       (move-x [:o  nil nil 
+                                nil :x  nil
+                                nil :o nil])) 
+              )
           )
 
 (describe "Recording the human player's move"

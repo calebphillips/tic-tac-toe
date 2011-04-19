@@ -39,16 +39,28 @@
   (first (filter #(winner (first %)) 
           (map #(vector (assoc-in board [%] player) %) (empty-cells board)))))
 
+(defn move-player [board position player]
+  (if (get-in board [position])
+    (throw (IllegalArgumentException.))
+    (assoc-in board [position] player)))
+
 (defn find-x-win [board]
   (first (find-win-for board :x)))
 
 (defn find-x-block [board]
   (let [win-for-o (second (find-win-for board :o))]
     (when win-for-o
-      (assoc-in board [win-for-o] :x))))
+      (move-player board win-for-o :x))))
+
+(defn find-corner-move [board]
+  (some #{0 2 6 8} (empty-cells board)))
 
 (defn find-killer-x-move [board]
-  (assoc-in board [(first (empty-cells board))] :x))
+  (if (nil? (get-in board [4])) ;if-not
+    (move-player board 4 :x)
+    (if-let [corner-move (find-corner-move board)]
+            (move-player board corner-move :x)
+            (move-player board (first (empty-cells board)) :x))))
 
 (defn move-x [board] 
   "Returns new board with computer's move marked"
@@ -59,9 +71,7 @@
               (find-killer-x-move board))))
 
 (defn move-o [board position]
-  (if (get-in board [position])
-    (throw (IllegalArgumentException.))
-    (assoc-in board [position] :o)))
+  (move-player board position :o))
 
 (defn format-board [board]
   (doseq [r (rows board)] (println (interpose "|" (map #(if (nil? %) "  " %) r)))))
