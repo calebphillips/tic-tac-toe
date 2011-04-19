@@ -5,3 +5,5 @@
 * display numbers for open spaces
 * check for bad input
 * standardize names (pos/position)
+* break up namespaces (game?)
+* figure out how to test the game
