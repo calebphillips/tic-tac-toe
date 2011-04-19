@@ -55,12 +55,15 @@
 (defn find-corner-move [board]
   (some #{0 2 6 8} (empty-cells board)))
 
-(defn find-killer-x-move [board]
-  (if (nil? (get-in board [4])) ;if-not
-    (move-player board 4 :x)
+(defn x-move-index [board]
+  (if-not (get-in board [4])
+    4
     (if-let [corner-move (find-corner-move board)]
-            (move-player board corner-move :x)
-            (move-player board (first (empty-cells board)) :x))))
+            corner-move
+            (first (empty-cells board)))))
+
+(defn find-killer-x-move [board]
+  (move-player board (x-move-index board) :x))
 
 (defn move-x [board] 
   "Returns new board with computer's move marked"
@@ -81,15 +84,18 @@
 
 (defn game []
   (loop [board (init-board) the-winner nil]
-    (if the-winner
-      (do 
-        (println (format-board board)) 
-        (println (str the-winner " won"))
-        )
-      (do
-        (println (format-board board))
-        (let [board (move-o board (Integer. (read-line)))]
-          (if (winner board)
-            (recur board (winner board))
-            (let [board (move-x board)]
-              (recur board (winner board)))))))))
+    (cond the-winner 
+          (do 
+            (println (format-board board)) 
+            (println (str the-winner " won")))
+          (empty? (empty-cells board)) (println "TIE!")
+          :else
+          (do
+            (println (format-board board))
+            (let [board (move-o board (Integer. (read-line)))]
+              (if (winner board)
+                (recur board (winner board))
+                (let [board (move-x board)]
+                  (recur board (winner board))))))
+          )
+    ))
