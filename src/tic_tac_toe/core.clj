@@ -26,7 +26,7 @@
   "Returns the keyword for the winner, if any, otherwise returns nil"
   (three-in-a-row (concat (rows board) (columns board) (diagonals board))))
 
-(defn- indexed-board [board]
+(defn indexed-board [board]
   (map vector (iterate inc 0) board))
 
 (defn empty-cells [board] 
@@ -52,8 +52,33 @@
     (when win-for-o
       (move-player board win-for-o :x))))
 
+(defn lonely-opponent [coll]
+      (and (some #{:o} coll) (not-any? #{:x} coll)))
+
+(defn find-in [idx-coll position]
+  (map second 
+       (first
+         (for [r idx-coll :when (seq (filter #(= position (first %)) r))] r) )))
+
+(defn my-row [board position]
+  (find-in (rows (indexed-board board)) position))
+
+(defn my-column [board position]
+  (find-in (columns (indexed-board board)) position) )
+
+(defn is-squeezed? [board corner]
+      (let [my-row (my-row board corner)
+            my-col (my-column board corner)]
+          (when (and (lonely-opponent my-row) (lonely-opponent my-col)) 
+            corner)))
+
+(defn find-squeezed-corner [board]
+      (first (filter #(is-squeezed? board %) (filter #{0 2 6 8} (empty-cells board)))))
+
 (defn find-corner-move [board]
-  (some #{0 2 6 8} (empty-cells board)))
+  (if-let [sc (find-squeezed-corner board)]
+      sc
+      (some #{0 2 6 8} (empty-cells board))))
 
 (defn x-move-index [board]
   (if-not (get-in board [4])

@@ -136,7 +136,7 @@
                                 nil nil nil
                                 nil nil nil])))
 
-          (it "chooses a corner if the middle is taken"
+          (it "chooses an empty corner if the middle is taken and there is no squeeze"
               (should= [:x  nil nil
                         nil :o  nil
                         nil nil nil]
@@ -150,15 +150,51 @@
                        (move-x [:x  nil nil
                                 nil :o  nil
                                 nil nil nil])) 
-
-              (should= [:o  nil :x
-                        nil :x  nil
-                        nil :o nil]
-                       (move-x [:o  nil nil 
-                                nil :x  nil
-                                nil :o nil])) 
               )
+
+          (it "can detect a lonely oppent"
+              (should (lonely-opponent [:o nil nil]))
+              (should (lonely-opponent [nil :o nil]))
+              (should (lonely-opponent [:o :o nil]))
+              (should-not (lonely-opponent [nil nil nil]))
+              (should-not (lonely-opponent [:o nil :x]))
+              (should-not (lonely-opponent [nil nil :x])))
+
+          (it "can find which row the corner is in"
+              (should= [:x nil nil]
+                       (my-row [:x  nil nil
+                                :o  nil nil
+                                nil nil nil] 2)))
+
+          (it "can find which column the corner is in"
+              (should= [nil nil :o]
+                       (my-column [:x  nil nil
+                                :o  nil nil
+                                nil nil :o] 2)))
+
+          (it "can detect a 'corner squeeze'"
+              (should (is-squeezed? [nil nil nil
+                                    nil :x  :o
+                                    :o  nil nil] 8)))
+
+          (it "prevents the 'corner squeeze'"
+              (should= [nil nil nil
+                        nil :x  :o
+                        :o  nil :x]
+                       (move-x [nil nil nil
+                                nil :x  :o
+                                :o  nil nil]))
+              
+              (should= [:o  nil :x
+                        nil :x  :o
+                        nil nil nil]
+                       (move-x [:o  nil nil
+                                nil :x  :o
+                                nil nil nil]))
+              )
+
           )
+
 
 (describe "Recording the human player's move"
           (it "updates the board"

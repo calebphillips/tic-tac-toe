@@ -1,3 +1,7 @@
 * create a utility function to generate the complete set of board states and hammer the player with them
 * coverage?
 * main function
+* get rid of colons in keywords
+* display numbers for open spaces
+* check for bad input
+* standardize names (pos/position)
