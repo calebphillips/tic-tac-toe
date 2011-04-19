@@ -232,9 +232,31 @@
                         :x nil :o]
                        (move-x [nil nil nil 
                                 :o  :x  nil
-                                nil nil :o]))
+                                nil nil :o])))
+
+          (it "responds to the double squeeze"
+              (should (#{1 3 5 7}
+                             (handle-double-squeeze [:o  nil nil
+                                                     nil :x  nil
+                                                     nil nil :o])))
+
+              (should (#{1 3 5 7}
+                             (handle-double-squeeze [nil  nil :o
+                                                     nil :x  nil
+                                                     :o nil nil]))) 
+              (should= nil (handle-double-squeeze [nil nil :o
+                                                   nil :x  nil
+                                                   nil nil nil])) 
               )
 
+          (it "prevents to the double squeeze"
+              (should= [:o  :x nil
+                        nil :x  nil
+                        nil nil :o]
+                       (move-x [:o  nil nil
+                                nil :x  nil
+                                nil nil :o]))
+              )
           )
 
 

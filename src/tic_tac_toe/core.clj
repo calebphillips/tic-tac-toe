@@ -80,12 +80,18 @@
       sc
       (some #{0 2 6 8} (empty-cells board))))
 
+(defn handle-double-squeeze [board]
+  (when (some #{board} [[:o nil nil nil :x nil nil nil :o] [nil nil :o nil :x nil :o nil nil]])
+    (some #{1 3 5 7} (empty-cells board))))
+
 (defn x-move-index [board]
   (if-not (get-in board [4])
     4
-    (if-let [corner-move (find-corner-move board)]
-            corner-move
-            (first (empty-cells board)))))
+    (if-let [ds (handle-double-squeeze board)]
+            ds
+            (if-let [corner-move (find-corner-move board)]
+                    corner-move
+                    (first (empty-cells board))))))
 
 (defn find-killer-x-move [board]
   (move-player board (x-move-index board) :x))
