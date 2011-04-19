@@ -52,13 +52,11 @@
 
 (defn move-x [board] 
   "Returns new board with computer's move marked"
-  (let [winning-move (find-x-win board)]
-    (if winning-move
+  (if-let [winning-move (find-x-win board)]
       winning-move
-      (let [blocking-move (find-x-block board)]
-        (if blocking-move
-          blocking-move
-          (find-killer-x-move board))))))
+      (if-let [blocking-move (find-x-block board)]
+              blocking-move
+              (find-killer-x-move board))))
 
 (defn move-o [board position]
   (if (get-in board [position])
