@@ -178,6 +178,20 @@
                                     :o  nil nil] 8)))
 
           (it "prevents the 'corner squeeze'"
+              (should= [:x  :o  nil
+                        nil :x  nil
+                        :o  nil nil]
+                       (move-x [nil :o  nil
+                                nil :x  nil
+                                :o  nil nil]))
+
+              (should= [nil  :o :x 
+                        nil :x  nil
+                        nil nil :o]
+                       (move-x [nil :o  nil
+                                nil :x  nil
+                                nil nil :o]))
+
               (should= [nil nil nil
                         nil :x  :o
                         :o  nil :x]
@@ -191,6 +205,34 @@
                        (move-x [:o  nil nil
                                 nil :x  :o
                                 nil nil nil]))
+
+              (should= [:o  nil nil
+                        nil :x  nil
+                        :x  :o  nil]
+                       (move-x [:o  nil nil
+                                nil :x  nil
+                                nil :o  nil]))
+
+              (should= [nil nil :o
+                       nil :x  nil
+                       nil :o  :x]
+                       (move-x [nil nil :o
+                                nil :x  nil
+                                nil :o  nil]))
+
+              (should= [:x  nil :o
+                        :o  :x  nil
+                        nil nil nil]
+                       (move-x [nil nil :o
+                                :o  :x  nil
+                                nil nil  nil]))
+
+              (should= [nil nil nil 
+                        :o  :x  nil
+                        :x nil :o]
+                       (move-x [nil nil nil 
+                                :o  :x  nil
+                                nil nil :o]))
               )
 
           )
