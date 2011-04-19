@@ -1,12 +1,15 @@
 (ns tic-tac-toe.core)
 
 (defn rows [board]
+  "Returns a seq of 3 seqs for the rows of the board"
   (partition 3 board))
 
 (defn columns [board]
+  "Returns a seq of 3 seqs for the columns of the board"
   (for [i (range 3)] (map #(nth % i) (partition 3 board))))
 
 (defn diagonals [board]
+  "Returns a seq of 2 seqs for the diagonals"
   (let [coords [[0 4 8] [6 4 2]]]
     (map #(for [n %] (nth board n)) coords)))
 
@@ -30,8 +33,8 @@
   (map first (filter #(nil? (second %)) (indexed-board board))))
 
 (defn find-win-for [board player]
-  "Finds winning board states and returns a seq of vectors of the winning state"
-  "and the move that was made to get to that state.  This additional detail is"
+  "Finds winning board states and returns a seq of vectors of (1) the winning state"
+  "and (2) the position of the winning move.  This additional detail is"
   "using for blocking a potential win by the opponent"
   (first (filter #(winner (first %)) 
           (map #(vector (assoc-in board [%] player) %) (empty-cells board)))))
@@ -58,10 +61,12 @@
           (find-killer-x-move board))))))
 
 (defn move-o [board position]
-  (assoc-in board [position] :o))
+  (if (get-in board [position])
+    (throw (IllegalArgumentException.))
+    (assoc-in board [position] :o)))
 
-(defn- format-board [board]
-  board)
+(defn format-board [board]
+  (doseq [r (rows board)] (println (interpose "|" (map #(if (nil? %) "  " %) r)))))
 
 (defn- init-board []
   (vec (repeat 9 nil)))
@@ -70,12 +75,12 @@
   (loop [board (init-board) the-winner nil]
     (if the-winner
       (do 
+        (println (format-board board)) 
         (println (str the-winner " won"))
-        (println (format-board board)))
+        )
       (do
         (println (format-board board))
         (let [board (move-o board (Integer. (read-line)))]
-          (println (format-board board))
           (if (winner board)
             (recur board (winner board))
             (let [board (move-x board)]

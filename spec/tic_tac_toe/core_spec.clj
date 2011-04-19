@@ -125,3 +125,14 @@
                        (move-x [nil nil nil nil :o nil nil nil nil]))))
           )
 
+(describe "Recording the human player's move"
+          (it "updates the board"
+              (should= [:o nil nil nil nil nil nil nil nil]
+                       (move-o [nil nil nil nil nil nil nil nil nil] 0)))
+          
+          (it "throw an exception if the space is already taken"
+              (should-throw IllegalArgumentException
+                            (move-o [:x nil nil nil nil nil nil nil nil] 0)))
+          )
+
+
