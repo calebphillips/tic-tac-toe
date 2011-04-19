@@ -107,26 +107,3 @@
 (defn move-o [board position]
   (move-player board position :o))
 
-(defn format-board [board]
-  (doseq [r (rows board)] (println (interpose "|" (map #(if (nil? %) "  " %) r)))))
-
-(defn- init-board []
-  (vec (repeat 9 nil)))
-
-(defn game []
-  (loop [board (init-board) the-winner nil]
-    (cond the-winner 
-          (do 
-            (println (format-board board)) 
-            (println (str the-winner " won")))
-          (empty? (empty-cells board)) (println "TIE!")
-          :else
-          (do
-            (println (format-board board))
-            (let [board (move-o board (Integer. (read-line)))]
-              (if (winner board)
-                (recur board (winner board))
-                (let [board (move-x board)]
-                  (recur board (winner board))))))
-          )
-    ))

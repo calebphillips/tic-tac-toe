@@ -7,3 +7,4 @@
 * standardize names (pos/position)
 * break up namespaces (game?)
 * figure out how to test the game
+* End the game when no one can win (?)
