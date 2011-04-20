@@ -84,6 +84,7 @@
   (when (some #{board} [[:o nil nil nil :x nil nil nil :o] [nil nil :o nil :x nil :o nil nil]])
     (some #{1 3 5 7} (empty-cells board))))
 
+; Eliminate nested if by using a lazy seq?
 (defn x-move-index [board]
   (if-not (get-in board [4])
     4
