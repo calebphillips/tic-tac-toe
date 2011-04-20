@@ -8,3 +8,4 @@
 * break up namespaces (game?)
 * figure out how to test the game
 * End the game when no one can win (?)
+* update computer logic to try to get squeezes, before going to the middle
