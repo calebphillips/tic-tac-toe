@@ -76,24 +76,25 @@
       (first (filter #(is-squeezed? board %) (filter #{0 2 6 8} (empty-cells board)))))
 
 (defn find-corner-move [board]
-  (if-let [sc (find-squeezed-corner board)]
+  (fn [] (if-let [sc (find-squeezed-corner board)]
       sc
-      (some #{0 2 6 8} (empty-cells board))))
+      (some #{0 2 6 8} (empty-cells board)))))
 
 (defn handle-double-squeeze [board]
-  (when (some #{board} [[:o nil nil nil :x nil nil nil :o] [nil nil :o nil :x nil :o nil nil]])
-    (some #{1 3 5 7} (empty-cells board))))
+  (fn [] (when (some #{board} [[:o nil nil nil :x nil nil nil :o] [nil nil :o nil :x nil :o nil nil]])
+    (some #{1 3 5 7} (empty-cells board)))))
 
-; Eliminate nested if by using a lazy seq?
-; Don't think so, but using some to invoke hofs might work
+(defn move-to-center [board]
+  (fn [] (when-not (get-in board [4]) 4)))
+
+(defn move-to-first-empty [board]
+  (fn [] (first (empty-cells board))))
+
 (defn x-move-index [board]
-  (if-not (get-in board [4])
-    4
-    (if-let [ds (handle-double-squeeze board)]
-            ds
-            (if-let [corner-move (find-corner-move board)]
-                    corner-move
-                    (first (empty-cells board))))))
+  (some #(%) [(move-to-center board) 
+              (handle-double-squeeze board)
+              (find-corner-move board)
+              (move-to-first-empty board)]))
 
 (defn find-killer-x-move [board]
   (move-player board (x-move-index board) :x))
