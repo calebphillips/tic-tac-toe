@@ -32,6 +32,8 @@
 (defn empty-cells [board] 
   (map first (filter #(nil? (second %)) (indexed-board board))))
 
+; TODO always selecting (second) now - does that mean we only need the index?
+; or can we move away from the index and just use the board?
 (defn find-win-for [board player]
   "Finds winning board states and returns a seq of vectors of (1) the winning state"
   "and (2) the position of the winning move.  This additional detail is"
@@ -39,26 +41,20 @@
   (first (filter #(winner (first %)) 
           (map #(vector (assoc-in board [%] player) %) (empty-cells board)))))
 
-(defn move-player [board position player]
-  (if (get-in board [position])
-    (throw (IllegalArgumentException.))
-    (assoc-in board [position] player)))
+(defn move-to-win [board]
+  (fn [] (second (find-win-for board :x))))
 
-(defn find-x-win [board]
-  (first (find-win-for board :x)))
+(defn move-to-block [board]
+  (fn [] (second (find-win-for board :o))))
 
-(defn find-x-block [board]
-  (let [win-for-o (second (find-win-for board :o))]
-    (when win-for-o
-      (move-player board win-for-o :x))))
-
-(defn lonely-opponent [coll]
-      (and (some #{:o} coll) (not-any? #{:x} coll)))
 
 (defn find-in [idx-coll position]
   (map second 
        (first
          (for [r idx-coll :when (seq (filter #(= position (first %)) r))] r) )))
+
+(defn lonely-opponent [coll]
+  (and (some #{:o} coll) (not-any? #{:x} coll)))
 
 (defn my-row [board position]
   (find-in (rows (indexed-board board)) position))
@@ -67,20 +63,18 @@
   (find-in (columns (indexed-board board)) position) )
 
 (defn is-squeezed? [board corner]
-      (let [my-row (my-row board corner)
-            my-col (my-column board corner)]
-          (when (and (lonely-opponent my-row) (lonely-opponent my-col)) 
-            corner)))
+  (let [my-row (my-row board corner)
+        my-col (my-column board corner)]
+    (when (and (lonely-opponent my-row) (lonely-opponent my-col)) 
+      corner)))
 
 (defn find-squeezed-corners [board]
-      (filter #(is-squeezed? board %) (filter #{0 2 6 8} (empty-cells board))))
-
-(defn move-to-corner [board]
-  (fn [] (some #{0 2 6 8} (empty-cells board))))
+  (filter #(is-squeezed? board %) (filter #{0 2 6 8} (empty-cells board))))
 
 (defn move-to-center [board]
   (fn [] (when-not (get-in board [4]) 4)))
 
+; TODO Extract
 (defn prevent-traps [board]
   (fn [] 
     (let [sc (find-squeezed-corners board) ct (count sc)]
@@ -90,25 +84,29 @@
             (first sc)
             :else nil))))
 
+(defn move-to-corner [board]
+  (fn [] (some #{0 2 6 8} (empty-cells board))))
+
 (defn move-to-first-empty [board]
   (fn [] (first (empty-cells board))))
 
 (defn x-move-index [board]
-  (some #(%) ((juxt move-to-center 
+  (some #(%) ((juxt move-to-win
+                    move-to-block
+                    move-to-center 
                     prevent-traps
                     move-to-corner 
                     move-to-first-empty) board)))
 
-(defn find-killer-x-move [board]
-  (move-player board (x-move-index board) :x))
+; TODO Give a nice error message
+(defn move-player [board position player]
+  (if (get-in board [position])
+    (throw (IllegalArgumentException.))
+    (assoc-in board [position] player)))
 
 (defn move-x [board] 
   "Returns new board with computer's move marked"
-  (if-let [winning-move (find-x-win board)]
-      winning-move
-      (if-let [blocking-move (find-x-block board)]
-              blocking-move
-              (find-killer-x-move board))))
+  (move-player board (x-move-index board) :x))
 
 (defn move-o [board position]
   (move-player board position :o))
