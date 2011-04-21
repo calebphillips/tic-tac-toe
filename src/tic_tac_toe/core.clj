@@ -91,10 +91,10 @@
   (fn [] (first (empty-cells board))))
 
 (defn x-move-index [board]
-  (some #(%) [(move-to-center board) 
-              (handle-double-squeeze board)
-              (find-corner-move board)
-              (move-to-first-empty board)]))
+  (some #(%) ((juxt move-to-center 
+                    handle-double-squeeze 
+                    find-corner-move 
+                    move-to-first-empty) board)))
 
 (defn find-killer-x-move [board]
   (move-player board (x-move-index board) :x))
