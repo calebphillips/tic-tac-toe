@@ -85,6 +85,7 @@
     (some #{1 3 5 7} (empty-cells board))))
 
 ; Eliminate nested if by using a lazy seq?
+; Don't think so, but using some to invoke hofs might work
 (defn x-move-index [board]
   (if-not (get-in board [4])
     4
