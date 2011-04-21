@@ -72,28 +72,31 @@
           (when (and (lonely-opponent my-row) (lonely-opponent my-col)) 
             corner)))
 
-(defn find-squeezed-corner [board]
-      (first (filter #(is-squeezed? board %) (filter #{0 2 6 8} (empty-cells board)))))
+(defn find-squeezed-corners [board]
+      (filter #(is-squeezed? board %) (filter #{0 2 6 8} (empty-cells board))))
 
-(defn find-corner-move [board]
-  (fn [] (if-let [sc (find-squeezed-corner board)]
-      sc
-      (some #{0 2 6 8} (empty-cells board)))))
-
-(defn handle-double-squeeze [board]
-  (fn [] (when (some #{board} [[:o nil nil nil :x nil nil nil :o] [nil nil :o nil :x nil :o nil nil]])
-    (some #{1 3 5 7} (empty-cells board)))))
+(defn move-to-corner [board]
+  (fn [] (some #{0 2 6 8} (empty-cells board))))
 
 (defn move-to-center [board]
   (fn [] (when-not (get-in board [4]) 4)))
+
+(defn prevent-traps [board]
+  (fn [] 
+    (let [sc (find-squeezed-corners board) ct (count sc)]
+      (cond (= 2 ct)
+            (some #{1 3 5 7} (empty-cells board))
+            (= 1 ct)
+            (first sc)
+            :else nil))))
 
 (defn move-to-first-empty [board]
   (fn [] (first (empty-cells board))))
 
 (defn x-move-index [board]
   (some #(%) ((juxt move-to-center 
-                    handle-double-squeeze 
-                    find-corner-move 
+                    prevent-traps
+                    move-to-corner 
                     move-to-first-empty) board)))
 
 (defn find-killer-x-move [board]
