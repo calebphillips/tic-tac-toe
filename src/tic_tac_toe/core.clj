@@ -41,13 +41,6 @@
   (first (filter #(winner (first %)) 
           (map #(vector (assoc-in board [%] player) %) (empty-cells board)))))
 
-(defn move-to-win [board]
-  (fn [] (second (find-win-for board :x))))
-
-(defn move-to-block [board]
-  (fn [] (second (find-win-for board :o))))
-
-
 (defn find-in [idx-coll position]
   (map second 
        (first
@@ -71,18 +64,21 @@
 (defn find-squeezed-corners [board]
   (filter #(is-squeezed? board %) (filter #{0 2 6 8} (empty-cells board))))
 
+(defn move-to-win [board]
+  (fn [] (second (find-win-for board :x))))
+
+(defn move-to-block [board]
+  (fn [] (second (find-win-for board :o))))
+
 (defn move-to-center [board]
   (fn [] (when-not (get-in board [4]) 4)))
 
-; TODO Extract
-(defn prevent-traps [board]
-  (fn [] 
-    (let [sc (find-squeezed-corners board) ct (count sc)]
-      (cond (= 2 ct)
-            (some #{1 3 5 7} (empty-cells board))
-            (= 1 ct)
-            (first sc)
-            :else nil))))
+(defn prevent-diagonal-trap [board]
+      (fn [] (when (= 2 (count (find-squeezed-corners board)))
+               (some #{1 3 5 7} (empty-cells board)))))
+
+(defn prevent-corner-trap [board]
+  (fn [] (first (find-squeezed-corners board))))
 
 (defn move-to-corner [board]
   (fn [] (some #{0 2 6 8} (empty-cells board))))
@@ -90,23 +86,23 @@
 (defn move-to-first-empty [board]
   (fn [] (first (empty-cells board))))
 
-(defn x-move-index [board]
+(defn find-x-move [board]
   (some #(%) ((juxt move-to-win
                     move-to-block
                     move-to-center 
-                    prevent-traps
+                    prevent-diagonal-trap
+                    prevent-corner-trap
                     move-to-corner 
                     move-to-first-empty) board)))
 
-; TODO Give a nice error message
 (defn move-player [board position player]
   (if (get-in board [position])
-    (throw (IllegalArgumentException.))
+    (throw (IllegalArgumentException. "That space is already taken."))
     (assoc-in board [position] player)))
 
 (defn move-x [board] 
   "Returns new board with computer's move marked"
-  (move-player board (x-move-index board) :x))
+  (move-player board (find-x-move board) :x))
 
 (defn move-o [board position]
   (move-player board position :o))

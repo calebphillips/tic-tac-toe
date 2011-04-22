@@ -236,15 +236,15 @@
 
           (it "responds to the double squeeze"
               (should (#{1 3 5 7}
-                             ((prevent-traps [:o  nil nil
+                             ((prevent-diagonal-trap [:o  nil nil
                                               nil :x  nil
                                               nil nil :o]))))
 
               (should (#{1 3 5 7}
-                             ((prevent-traps [nil  nil :o
+                             ((prevent-diagonal-trap [nil  nil :o
                                               nil :x  nil
                                               :o nil nil]))))
-              (should= nil ((prevent-traps [nil nil :o
+              (should= nil ((prevent-diagonal-trap [nil nil :o
                                             nil :x  nil
                                             nil nil nil]))) 
               )
@@ -266,7 +266,7 @@
                        (move-o [nil nil nil nil nil nil nil nil nil] 0)))
           
           (it "throw an exception if the space is already taken"
-              (should-throw IllegalArgumentException
+              (should-throw IllegalArgumentException "That space is already taken."
                             (move-o [:x nil nil nil nil nil nil nil nil] 0)))
           )
 
