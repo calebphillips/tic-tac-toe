@@ -99,30 +99,30 @@
                         :o nil nil 
                         nil nil :o]
                        (move-x [:x :x nil 
-                              :o nil nil 
-                              nil nil :o]))
+                                :o nil nil 
+                                nil nil :o]))
               (should= [:x :o nil 
                         :o :x :o 
                         :o :x :x]
                        (move-x [:x :o nil 
-                              :o nil :o 
-                              :o :x :x])))
+                                :o nil :o 
+                                :o :x :x])))
 
           (it "blocks if it needs to"
               (should= [:o :o :x
                         :x nil nil
                         nil :x nil]
                        (move-x [:o :o nil
-                              :x nil nil
-                              nil :x nil])))
+                                :x nil nil
+                                nil :x nil])))
 
           (it "chooses winning over blocking"
               (should= [nil nil nil 
                         :o :o nil
                         :x :x :x]
                        (move-x [nil nil nil 
-                              :o :o nil
-                              :x :x nil])))
+                                :o :o nil
+                                :x :x nil])))
 
           (it "makes some move if neither win or block"
               (should (some #(= :x %)
@@ -162,20 +162,20 @@
 
           (it "can find which row the corner is in"
               (should= [:x nil nil]
-                       (my-row [:x  nil nil
-                                :o  nil nil
-                                nil nil nil] 2)))
+                       (containing-row [:x  nil nil
+                                        :o  nil nil
+                                        nil nil nil] 2)))
 
           (it "can find which column the corner is in"
               (should= [nil nil :o]
-                       (my-column [:x  nil nil
-                                :o  nil nil
-                                nil nil :o] 2)))
+                       (containing-column [:x  nil nil
+                                           :o  nil nil
+                                           nil nil :o] 2)))
 
           (it "can detect a 'corner squeeze'"
               (should (is-squeezed? [nil nil nil
-                                    nil :x  :o
-                                    :o  nil nil] 8)))
+                                     nil :x  :o
+                                     :o  nil nil] 8)))
 
           (it "prevents the 'corner squeeze'"
               (should= [:x  :o  nil
@@ -236,17 +236,16 @@
 
           (it "responds to the double squeeze"
               (should (#{1 3 5 7}
-                             ((prevent-diagonal-trap [:o  nil nil
-                                              nil :x  nil
-                                              nil nil :o]))))
-
+                          ((prevent-diagonal-trap [:o  nil nil
+                                                   nil :x  nil
+                                                   nil nil :o]))))
               (should (#{1 3 5 7}
-                             ((prevent-diagonal-trap [nil  nil :o
-                                              nil :x  nil
-                                              :o nil nil]))))
+                          ((prevent-diagonal-trap [nil  nil :o
+                                                   nil :x  nil
+                                                   :o nil nil]))))
               (should= nil ((prevent-diagonal-trap [nil nil :o
-                                            nil :x  nil
-                                            nil nil nil]))) 
+                                                    nil :x  nil
+                                                    nil nil nil]))) 
               )
 
           (it "prevents to the double squeeze"
