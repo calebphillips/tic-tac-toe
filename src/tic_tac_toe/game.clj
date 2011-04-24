@@ -33,7 +33,7 @@
         (let [board (move-o board (read-move board))]
           (if (winner board)
             (recur board (winner board))
-            (if (empty? (empty-cells board))
+            (if (tie board)
               (pr-tie-msg board)
               (let [board (move-x board)]
                 (recur board (winner board))))))))))

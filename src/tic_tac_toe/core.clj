@@ -35,6 +35,11 @@
 (defn empty-cells [board] 
   (map first (filter #(nil? (second %)) (indexed-board board))))
 
+(defn tie [board]
+  (and (not (winner board)) 
+       (empty? (empty-cells board))))
+
+
 (defn all-moves [board player]
   ; Returns lazy seq of couplets representing all possibles moves and 
   ; resulting boards: [[board1 move1] [board2 move2]]

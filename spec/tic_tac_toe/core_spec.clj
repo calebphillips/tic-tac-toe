@@ -85,6 +85,17 @@
                                     :o :x :x
                                     :x :o :o]))))
 
+(describe "Checking for a tie"
+          (it "detects a tie when the board is full"
+              (should (tie [:x :o :x
+                            :o :x :o
+                            :o :x :o])))
+          
+          (it "does not report a tie for a full board with a win"
+              (should-not (tie [:x :x :o
+                                :o :x :o
+                                :o :o :x]))))
+
 (describe "Making a move" 
           (it "finds empty cells"
               (should= [0 1 2 3 4 5 6 7 8] (empty-cells (repeat 9 nil)))
