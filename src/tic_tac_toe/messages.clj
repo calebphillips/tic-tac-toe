@@ -2,12 +2,6 @@
   (:use [tic-tac-toe.core]
         [clojure.string :only [join]]))
 
-(defn display-welcome []
-  (let [banner (apply str (repeat 50 "="))]
-    (println (str banner 
-                  "\n\n        Tic Tac Toe\n\n" 
-                  banner))))
-
 (defn format-player [p]
   (.toUpperCase (name p)))
 
@@ -58,3 +52,10 @@
   (do 
     (print "Invalid move, please select another move: ")
     (flush)))
+
+(defn display-welcome []
+  (let [banner (apply str (repeat 50 "="))]
+    (println (str banner 
+                  "\n\n        Tic Tac Toe\n\n" 
+                  banner))))
+
