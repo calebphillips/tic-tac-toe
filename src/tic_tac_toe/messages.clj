@@ -11,13 +11,15 @@
 (defn format-player [p]
   (.toUpperCase (name p)))
 
-(defn format-space [value]
+(defn format-cell [value]
   (if value
     (str " " (format-player value) " ")
     "   ")) 
 
 (defn format-row-values [board]
-  (rows (map format-space board)))
+  "Returns the board divided into 3 rows where each row contains"
+  "the 3 cells formatted for output"
+  (rows (map format-cell board)))
 
 (defn format-rows [board]
   (map #(join "|" %) (format-row-values board)))
@@ -31,7 +33,7 @@
 (defn display-board [board]
   (println (format-board board)))
 
-(defn pr-msg [board msg]
+(defn annouce [board msg]
   (let [banner (apply str (repeat 40 "*"))] 
     (display-board board)
     (println)
@@ -41,18 +43,18 @@
     (println)))
 
 (defn announce-victory [board the-winner]
-  (pr-msg board (str (.toUpperCase (name the-winner)) " has won the game!")))
+  (annouce board (str (format-player the-winner) " has won the game!")))
 
 (defn announce-tie [board]
-  (pr-msg board "The game has ended in a tie."))
+  (annouce board "The game has ended in a tie."))
 
 (defn prompt [board]
   (do
     (display-board board)
-    (print (str "Please select a move [0-8]: "))
+    (print "Please select a move [0-8]: ")
     (flush))) 
 
 (defn error-prompt []
   (do 
-    (print (str "Invalid move, please select another move: "))
+    (print "Invalid move, please select another move: ")
     (flush)))
