@@ -13,19 +13,19 @@
                       (game))))))
 (describe "Playing"
   (it "validates the input"
-    (game-with-input-should (to-input "A" 0 8 5) #"Invalid move")
-    (game-with-input-should (to-input 14 0 8 5) #"Invalid move")
-    (game-with-input-should (to-input 0 0 8 5) #"Invalid move"))
+    (game-with-input-should (to-input "A" 1 9 6) #"Invalid move")
+    (game-with-input-should (to-input 14 1 9 6) #"Invalid move")
+    (game-with-input-should (to-input 1 1 9 6) #"Invalid move"))
 
   (it "shows the winner"
-    (game-with-input-should (to-input 0 8 5) #"X has won the game!") ) 
+    (game-with-input-should (to-input 1 9 6) #"X has won the game!")) 
 
   (it "shows a tie message"
-    (game-with-input-should (to-input 0 8 7 2 3) #"The game has ended in a tie.")))
+    (game-with-input-should (to-input 1 9 8 3 4) #"The game has ended in a tie.")))
 
 (describe "A single iteration of the read loop"
   (it "reads a number in the valid range"
-    (should= 5 (with-in-str "5"
+    (should= 4 (with-in-str "5"
                  (read-one-move (init-board)))))
 
   (it "returns nil if the input is not a number"
@@ -33,9 +33,9 @@
                    (read-one-move (init-board)))))
 
   (it "returns nil if the input out of range"
-    (should= nil (with-in-str "-1"
+    (should= nil (with-in-str "0"
                    (read-one-move (init-board))))
-    (should= nil (with-in-str "9"
+    (should= nil (with-in-str "10"
                    (read-one-move (init-board))))))
 
 (describe "printing messages"

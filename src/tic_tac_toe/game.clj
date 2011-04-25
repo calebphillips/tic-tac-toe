@@ -9,10 +9,15 @@
 (defn within-range? [move]
   (< -1 move 9))
 
+(defn is-valid? [board move]
+  "Returns whether or not this move is valid given the current state"
+  "of the board"
+  (and (within-range? move)
+       (space-open? board move)))
+
 (defn read-number [board]
-  (let [move (Integer. (read-line))] 
-    (when (and (within-range? move)
-               (space-open? board move))
+  (let [move (dec (Integer. (read-line)))] 
+    (when (is-valid? board move)
       move)))
 
 (defn read-one-move [board]
