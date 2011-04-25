@@ -3,8 +3,7 @@
   (:use [tic-tac-toe.core]
         [tic-tac-toe.messages]))
 
-
-(defn- init-board []
+(defn init-board []
   (vec (repeat 9 nil)))
 
 ; Really in need of love
@@ -16,29 +15,31 @@
     (catch NumberFormatException _ nil)))
 
 (defn read-move [board]
-  (loop [move (read-one-move board)]
-    (if move
-      move
-      (do
-        (print (str "Invalid move, please select another move: "))
-        (flush)
-        (recur (read-one-move board))))))
+  (do (prompt board)
+    (loop [move (read-one-move board)]
+      (if move
+        move
+        (do
+          (print (str "Invalid move, please select another move: "))
+          (flush)
+          (recur (read-one-move board)))))))
+
+(defn next-move [board]
+  (if (even? (count (remove nil? board)))
+    (move-o board (read-move board))
+    (move-x board)))
+
+(defn print-messages [board]
+  (if-let [the-winner (winner board)]
+    (pr-victory-msg board the-winner)
+    (when (tie? board)
+      (pr-tie-msg board))))
 
 (defn game []
-  (loop [board (init-board) the-winner nil]
-    (if the-winner 
-      (pr-victory-msg board the-winner)
-      (do
-        (prompt board)
-        (let [board (move-o board (read-move board))]
-          (if (winner board)
-            (recur board (winner board))
-            (if (tie board)
-              (pr-tie-msg board)
-              (let [board (move-x board)]
-                (recur board (winner board))))))))))
-
-
+  (loop [board (next-move (init-board))]
+    (print-messages board)
+    (when (moves-remaining? board)
+      (recur (next-move board)))))
 
 (defn -main [& args]
   (do (welcome) (game)))

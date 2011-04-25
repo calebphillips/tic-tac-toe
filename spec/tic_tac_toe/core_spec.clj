@@ -87,14 +87,26 @@
 
 (describe "Checking for a tie"
           (it "detects a tie when the board is full"
-              (should (tie [:x :o :x
+              (should (tie? [:x :o :x
                             :o :x :o
                             :o :x :o])))
           
           (it "does not report a tie for a full board with a win"
-              (should-not (tie [:x :x :o
+              (should-not (tie? [:x :x :o
                                 :o :x :o
                                 :o :o :x]))))
+
+(describe "Checking for remaining moves"
+          (it "returns falsey when there is a winner"
+              (should-not (moves-remaining? [:x :x :x :o :nil :o nil :o nil])))
+          
+          (it "returns falsey when there is a tie"
+              (should-not (moves-remaining? [:x :o :x
+                                             :o :x :o
+                                             :o :x :o])))
+          
+          (it "returns truthy"
+              (should (moves-remaining? [:x :o nil nil nil nil nil nil nil]))))
 
 (describe "Making a move" 
           (it "finds empty cells"
