@@ -2,7 +2,7 @@
   (:use [tic-tac-toe.core]
         [clojure.string :only [join]]))
 
-(defn welcome []
+(defn display-welcome []
   (let [banner (apply str (repeat 50 "="))]
     (println (str banner 
                   "\n\n        Tic Tac Toe\n\n" 

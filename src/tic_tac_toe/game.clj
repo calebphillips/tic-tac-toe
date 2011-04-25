@@ -9,31 +9,40 @@
 (defn within-range? [move]
   (< -1 move 9))
 
-(defn is-valid? [board move]
-  "Returns whether or not this move is valid given the current state"
-  "of the board"
+(defn is-valid? 
+  "Returns whether or not this move is valid given the current state
+  of the board"
+  [board move]
   (and (within-range? move)
        (space-open? board move)))
 
-(defn read-number [board]
+(defn read-number 
+  "Read one number from the player. Return the number if it is a valid move for
+  the current state of the board (the space isn't already taken), otherwise nil"
+  [board]
   (let [move (dec (Integer. (read-line)))] 
     (when (is-valid? board move)
       move)))
 
-(defn read-one-move [board]
+(defn read-one-move 
+  "Reads one move from the human player, returning either the index of the
+  move or nil if the player did not enter valid input"
+  [board]
   (try (read-number board)
     (catch NumberFormatException _ nil)))
 
-(defn print-addtl-prompt [move]
-  "Prints any additional prompts that may be need during"
-  "iterations of the input loop"
+(defn print-loop-prompt 
+  "Prints any additional prompts that *may* be need during
+  iterations of the input loop"
+  [move]
   (when-not move
     (error-prompt)))
 
-(defn read-until-valid [board]
+(defn read-until-valid 
   "Reads input from the player until a valid move is entered"
+  [board]
   (loop [m (read-one-move board)]
-    (print-addtl-prompt m)
+    (print-loop-prompt m)
     (if m m
       (recur (read-one-move board)))))
 
@@ -42,23 +51,31 @@
     (prompt board)
     (read-until-valid board)))
 
-(defn next-move [board]
+(defn next-move 
+  "Returns a new board containing the next move, either from the human player
+  or the computer"
+  [board]
   (if (even? (count (remove nil? board)))
     (move-opponent board (get-opponent-move board))
     (move-computer board)))
 
-(defn print-messages [board]
+(defn print-status-messages 
+  "Prints messages about the status of the game: ended in tie, computer won, etc."
+  [board]
   (if-let [w (winner board)]
     (announce-victory board w)
     (when (tie? board)
       (announce-tie board))))
 
-(defn game []
+(defn game 
+  "The main loop for the game, including taking user input and determining
+  the outcome."
+  []
   (loop [board (next-move (init-board))]
-    (print-messages board)
+    (print-status-messages board)
     (when (moves-remaining? board)
       (recur (next-move board)))))
 
 (defn -main [& args]
-  (do (welcome) (game)))
+  (do (display-welcome) (game)))
 

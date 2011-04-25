@@ -42,12 +42,12 @@
   (it "displays the winning message"
     (should (re-seq #"X has won the game"
                     (with-out-str
-                      (print-messages [:x :x :x nil nil nil nil nil nil])))))
+                      (print-status-messages [:x :x :x nil nil nil nil nil nil])))))
 
   (it "displays the tie message"
     (should (re-seq #"The game has ended in a tie"
                     (with-out-str
-                      (print-messages [:x :o :x
+                      (print-status-messages [:x :o :x
                                        :o :x :o
                                        :o :x :o]))))))
                                   
