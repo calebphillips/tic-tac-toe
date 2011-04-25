@@ -108,7 +108,7 @@
           (it "returns truthy"
               (should (moves-remaining? [:x :o nil nil nil nil nil nil nil]))))
 
-(describe "Making a move" 
+(describe "Making a move for the computer" 
           (it "finds empty cells"
               (should= [0 1 2 3 4 5 6 7 8] (empty-cells (repeat 9 nil)))
               (should= [2 3 4 5 6 7 8] (empty-cells (concat [:x :x] (repeat 7 nil))))
@@ -121,13 +121,13 @@
               (should= [:x :x :x 
                         :o nil nil 
                         nil nil :o]
-                       (move-x [:x :x nil 
+                       (move-computer [:x :x nil 
                                 :o nil nil 
                                 nil nil :o]))
               (should= [:x :o nil 
                         :o :x :o 
                         :o :x :x]
-                       (move-x [:x :o nil 
+                       (move-computer [:x :o nil 
                                 :o nil :o 
                                 :o :x :x])))
 
@@ -135,7 +135,7 @@
               (should= [:o :o :x
                         :x nil nil
                         nil :x nil]
-                       (move-x [:o :o nil
+                       (move-computer [:o :o nil
                                 :x nil nil
                                 nil :x nil])))
 
@@ -143,19 +143,19 @@
               (should= [nil nil nil 
                         :o :o nil
                         :x :x :x]
-                       (move-x [nil nil nil 
+                       (move-computer [nil nil nil 
                                 :o :o nil
                                 :x :x nil])))
 
           (it "makes some move if neither win or block"
               (should (some #(= :x %)
-                       (move-x [nil nil nil nil :o nil nil nil nil]))))
+                       (move-computer [nil nil nil nil :o nil nil nil nil]))))
 
           (it "chooses the middle if available"
               (should= [:o  nil nil
                         nil :x  nil
                         nil nil nil]
-                       (move-x [:o  nil nil
+                       (move-computer [:o  nil nil
                                 nil nil nil
                                 nil nil nil])))
 
@@ -163,14 +163,14 @@
               (should= [:x  nil nil
                         nil :o  nil
                         nil nil nil]
-                       (move-x [nil nil nil
+                       (move-computer [nil nil nil
                                 nil :o  nil
                                 nil nil nil]))
               
               (should= [:x  nil :x
                         nil :o  nil
                         nil nil nil]
-                       (move-x [:x  nil nil
+                       (move-computer [:x  nil nil
                                 nil :o  nil
                                 nil nil nil])) 
               )
@@ -204,56 +204,56 @@
               (should= [:x  :o  nil
                         nil :x  nil
                         :o  nil nil]
-                       (move-x [nil :o  nil
+                       (move-computer [nil :o  nil
                                 nil :x  nil
                                 :o  nil nil]))
 
               (should= [nil  :o :x 
                         nil :x  nil
                         nil nil :o]
-                       (move-x [nil :o  nil
+                       (move-computer [nil :o  nil
                                 nil :x  nil
                                 nil nil :o]))
 
               (should= [nil nil nil
                         nil :x  :o
                         :o  nil :x]
-                       (move-x [nil nil nil
+                       (move-computer [nil nil nil
                                 nil :x  :o
                                 :o  nil nil]))
               
               (should= [:o  nil :x
                         nil :x  :o
                         nil nil nil]
-                       (move-x [:o  nil nil
+                       (move-computer [:o  nil nil
                                 nil :x  :o
                                 nil nil nil]))
 
               (should= [:o  nil nil
                         nil :x  nil
                         :x  :o  nil]
-                       (move-x [:o  nil nil
+                       (move-computer [:o  nil nil
                                 nil :x  nil
                                 nil :o  nil]))
 
               (should= [nil nil :o
                        nil :x  nil
                        nil :o  :x]
-                       (move-x [nil nil :o
+                       (move-computer [nil nil :o
                                 nil :x  nil
                                 nil :o  nil]))
 
               (should= [:x  nil :o
                         :o  :x  nil
                         nil nil nil]
-                       (move-x [nil nil :o
+                       (move-computer [nil nil :o
                                 :o  :x  nil
                                 nil nil  nil]))
 
               (should= [nil nil nil 
                         :o  :x  nil
                         :x nil :o]
-                       (move-x [nil nil nil 
+                       (move-computer [nil nil nil 
                                 :o  :x  nil
                                 nil nil :o])))
 
@@ -275,7 +275,7 @@
               (should= [:o  :x nil
                         nil :x  nil
                         nil nil :o]
-                       (move-x [:o  nil nil
+                       (move-computer [:o  nil nil
                                 nil :x  nil
                                 nil nil :o]))
               )
@@ -285,11 +285,11 @@
 (describe "Recording the human player's move"
           (it "updates the board"
               (should= [:o nil nil nil nil nil nil nil nil]
-                       (move-o [nil nil nil nil nil nil nil nil nil] 0)))
+                       (move-opponent [nil nil nil nil nil nil nil nil nil] 0)))
           
           (it "throw an exception if the space is already taken"
               (should-throw IllegalArgumentException "That space is already taken."
-                            (move-o [:x nil nil nil nil nil nil nil nil] 0)))
+                            (move-opponent [:x nil nil nil nil nil nil nil nil] 0)))
           )
 
 

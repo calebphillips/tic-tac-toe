@@ -26,14 +26,14 @@
 
 (defn next-move [board]
   (if (even? (count (remove nil? board)))
-    (move-o board (read-move board))
-    (move-x board)))
+    (move-opponent board (read-move board))
+    (move-computer board)))
 
 (defn print-messages [board]
-  (if-let [the-winner (winner board)]
-    (pr-victory-msg board the-winner)
+  (if-let [w (winner board)]
+    (announce-victory board w)
     (when (tie? board)
-      (pr-tie-msg board))))
+      (announce-tie board))))
 
 (defn game []
   (loop [board (next-move (init-board))]

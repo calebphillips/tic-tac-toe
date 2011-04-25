@@ -28,10 +28,10 @@
     (println banner)
     (println)))
 
-(defn pr-victory-msg [board the-winner]
+(defn announce-victory [board the-winner]
   (pr-msg board (str (.toUpperCase (name the-winner)) " has won the game!")))
 
-(defn pr-tie-msg [board]
+(defn announce-tie [board]
   (pr-msg board "The game has ended in a tie."))
 
 (defn prompt [board]

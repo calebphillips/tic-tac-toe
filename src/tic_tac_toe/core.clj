@@ -1,5 +1,7 @@
 (ns tic-tac-toe.core)
 
+(def computer-marker :x)
+(def opponent-marker :o)
 (def corners #{0 2 6 8})
 (def cross-points #{1 3 5 7})
 
@@ -54,7 +56,7 @@
       (filter #(winner (first %)) (all-moves board player))))) 
 
 (defn lonely-opponent [coll]
-  (and (some #{:o} coll) (not-any? #{:x} coll)))
+  (and (some #{opponent-marker} coll) (not-any? #{computer-marker} coll)))
 
 (defn containing-row [board position]
   (nth (rows board) (quot position 3)))
@@ -70,10 +72,10 @@
   (filter #(is-squeezed? board %) (filter corners (empty-cells board))))
 
 (defn move-to-win [board]
-  (fn [] (find-win-for board :x)))
+  (fn [] (find-win-for board computer-marker)))
 
 (defn move-to-block [board]
-  (fn [] (find-win-for board :o)))
+  (fn [] (find-win-for board opponent-marker)))
 
 (defn move-to-center [board]
   (fn [] (when-not (get-in board [4]) 4)))
@@ -91,7 +93,7 @@
 (defn move-to-first-empty [board]
   (fn [] (first (empty-cells board))))
 
-(defn find-x-move [board]
+(defn find-computer-move [board]
   (some #(%) ((juxt move-to-win
                     move-to-block
                     move-to-center 
@@ -105,10 +107,10 @@
     (throw (IllegalArgumentException. "That space is already taken."))
     (assoc-in board [position] player)))
 
-(defn move-x [board] 
+(defn move-computer [board] 
   "Returns new board with computer's move marked"
-  (move-player board (find-x-move board) :x))
+  (move-player board (find-computer-move board) computer-marker))
 
-(defn move-o [board position]
-  (move-player board position :o))
+(defn move-opponent [board position]
+  (move-player board position opponent-marker))
 
