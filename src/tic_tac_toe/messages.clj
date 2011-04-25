@@ -4,24 +4,36 @@
 
 (defn welcome []
   (let [banner (apply str (repeat 50 "="))]
-    (println (str banner "\n\n        Tic Tac Toe\n\n" banner))))
+    (println (str banner 
+                  "\n\n        Tic Tac Toe\n\n" 
+                  banner))))
+
+(defn format-player [p]
+  (.toUpperCase (name p)))
 
 (defn format-space [value]
-  (if (nil? value)
-    "   "  
-    (str " " (.toUpperCase (name value)) " "))) 
+  (if value
+    (str " " (format-player value) " ")
+    "   ")) 
+
+(defn format-row-values [board]
+  (rows (map format-space board)))
+
+(defn format-rows [board]
+  (map #(join "|" %) (format-row-values board)))
 
 (defn format-board [board]
-  (do 
-    (println)
-    (doseq [r (rows board)] 
-      (println (interpose "|" (map format-space r))))
-    (println)))
+  (str
+    "\n"
+    (join "\n-----------\n" (format-rows board))
+    "\n"))
 
+(defn display-board [board]
+  (println (format-board board)))
 
 (defn pr-msg [board msg]
   (let [banner (apply str (repeat 40 "*"))] 
-    (format-board board)
+    (display-board board)
     (println)
     (println banner)
     (println (str "    " msg))
@@ -36,8 +48,8 @@
 
 (defn prompt [board]
   (do
-    (format-board board)
-    (print (str "Please select a move (" (join "," (empty-cells board)) "): "))
+    (display-board board)
+    (print (str "Please select a move [0-8]: "))
     (flush))) 
 
 (defn error-prompt []
