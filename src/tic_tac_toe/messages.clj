@@ -51,7 +51,7 @@
 (defn prompt [board]
   (do
     (display-board board)
-    (print "Please select a move [1-9]: ")
+    (print "Please select a move for 'O' [1-9]: ")
     (flush))) 
 
 (defn error-prompt []
