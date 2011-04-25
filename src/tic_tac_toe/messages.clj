@@ -39,3 +39,8 @@
     (format-board board)
     (print (str "Please select a move (" (join "," (empty-cells board)) "): "))
     (flush))) 
+
+(defn error-prompt []
+  (do 
+    (print (str "Invalid move, please select another move: "))
+    (flush)))

@@ -6,27 +6,42 @@
 (defn init-board []
   (vec (repeat 9 nil)))
 
-; Really in need of love
+(defn within-range? [move]
+  (< -1 move 9))
+
+(defn space-open? [board move]
+  (some #{move} (empty-cells board)))
+
 (defn read-one-move [board]
   (try 
     (let [move (Integer. (read-line))] 
-      (when (< -1 move 9) 
-        (when (some #{move} (empty-cells board)) move)))
+      (when 
+        (and (within-range? move)
+             (space-open? board move))
+        move))
     (catch NumberFormatException _ nil)))
 
-(defn read-move [board]
-  (do (prompt board)
-    (loop [move (read-one-move board)]
-      (if move
-        move
-        (do
-          (print (str "Invalid move, please select another move: "))
-          (flush)
-          (recur (read-one-move board)))))))
+(defn print-addtl-prompt [move]
+  "Prints any additional prompts that may be need during"
+  "iterations of the input loop"
+  (when-not move
+    (error-prompt)))
+
+(defn read-until-valid [board]
+  "Reads input from the player until a valid move is entered"
+  (loop [m (read-one-move board)]
+    (print-addtl-prompt m)
+    (if m m
+      (recur (read-one-move board)))))
+
+(defn get-opponent-move [board]
+  (do 
+    (prompt board)
+    (read-until-valid board)))
 
 (defn next-move [board]
   (if (even? (count (remove nil? board)))
-    (move-opponent board (read-move board))
+    (move-opponent board (get-opponent-move board))
     (move-computer board)))
 
 (defn print-messages [board]
