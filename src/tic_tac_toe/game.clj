@@ -9,16 +9,14 @@
 (defn within-range? [move]
   (< -1 move 9))
 
-(defn space-open? [board move]
-  (some #{move} (empty-cells board)))
+(defn read-number [board]
+  (let [move (Integer. (read-line))] 
+    (when (and (within-range? move)
+               (space-open? board move))
+      move)))
 
 (defn read-one-move [board]
-  (try 
-    (let [move (Integer. (read-line))] 
-      (when 
-        (and (within-range? move)
-             (space-open? board move))
-        move))
+  (try (read-number board)
     (catch NumberFormatException _ nil)))
 
 (defn print-addtl-prompt [move]

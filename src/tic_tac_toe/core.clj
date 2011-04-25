@@ -45,6 +45,9 @@
   (not (or (winner board)
            (tie? board))))
 
+(defn space-open? [board move]
+  (some #{move} (empty-cells board)))
+
 (defn all-moves [board player]
   ; Returns lazy seq of couplets representing all possibles moves and 
   ; resulting boards: [[board1 move1] [board2 move2]]
