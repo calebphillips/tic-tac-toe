@@ -79,53 +79,53 @@
   "Takes a board and a corner position a returns true if the only player
   in both the row and the column containing that corner is the opponent"
   [board corner]
-  (every? lonely-opponent? 
-          ((juxt containing-row containing-column) board corner)))
+  (every? #(lonely-opponent? (% board corner)) 
+          [containing-row containing-column]))
 
 (defn find-trappable-corners [board]
   (filter #(is-trappable? board %) 
           (filter corners (empty-cells board))))
 
 (defn move-to-win [board]
-  (fn [] (find-win-for board computer-marker)))
+  (find-win-for board computer-marker))
 
 (defn move-to-block [board]
-  (fn [] (find-win-for board opponent-marker)))
+  (find-win-for board opponent-marker))
 
 (defn move-to-center [board]
-  (fn [] (when-not (get-in board [4]) 4)))
+  (when-not (get-in board [4]) 4))
 
 (defn prevent-diagonal-trap 
   "Returns a board that responds correctly to being surrounded by the
   opponent on either of the diagonals"
   [board]
-  (fn [] (when (= 2 (count (find-trappable-corners board)))
-           (some cross-points (empty-cells board)))))
+  (when (= 2 (count (find-trappable-corners board)))
+           (some cross-points (empty-cells board))))
 
 (defn prevent-corner-trap 
   "Returns a move that will prevent the opponent from moving into a corner
   which would allow them to win on either the row of column containing
   that corner"
   [board]
-  (fn [] (first (find-trappable-corners board))))
+  (first (find-trappable-corners board)))
 
 (defn move-to-corner [board]
-  (fn [] (some corners (empty-cells board))))
+  (some corners (empty-cells board)))
 
 (defn move-to-first-empty [board]
-  (fn [] (first (empty-cells board))))
+  (first (empty-cells board)))
 
 (defn find-computer-move 
   "Returns the index of the first available move for the computer according
   to the precedence established in the playing strategy.  This is the brain."
   [board]
-  (some #(%) ((juxt move-to-win
+  (some #(% board)  [move-to-win
                     move-to-block
                     move-to-center 
                     prevent-diagonal-trap
                     prevent-corner-trap
                     move-to-corner 
-                    move-to-first-empty) board)))
+                    move-to-first-empty]))
 
 (defn move-player [board position player]
   (if (get-in board [position])

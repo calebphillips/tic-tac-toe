@@ -257,16 +257,16 @@
 
   (it "responds to the diagonal trap"
       (should (#{1 3 5 7}
-                  ((prevent-diagonal-trap [:o  nil nil
+                  (prevent-diagonal-trap [:o  nil nil
                                            nil :x  nil
-                                           nil nil :o]))))
+                                           nil nil :o])))
       (should (#{1 3 5 7}
-                  ((prevent-diagonal-trap [nil  nil :o
+                  (prevent-diagonal-trap [nil  nil :o
                                            nil :x  nil
-                                           :o nil nil]))))
-      (should= nil ((prevent-diagonal-trap [nil nil :o
+                                           :o nil nil])))
+      (should= nil (prevent-diagonal-trap [nil nil :o
                                             nil :x  nil
-                                            nil nil nil]))))
+                                            nil nil nil])))
 
   (it "prevents to the diagonal trap"
       (should= [:o  :x nil
