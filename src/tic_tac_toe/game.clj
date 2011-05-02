@@ -1,7 +1,15 @@
 (ns tic-tac-toe.game
   (:gen-class)
-  (:use [tic-tac-toe.core]
-        [tic-tac-toe.messages]))
+  (:use [tic-tac-toe.core :only [space-open? move-player 
+                                 winner tie? moves-remaining?]]
+        [tic-tac-toe.defensive-strategy :only [find-computer-move]]
+        [tic-tac-toe.messages :only [error-prompt prompt announce-victory
+                                     announce-tie display-welcome]]))
+
+; I think messages will become text-ui and become the main driver
+; while this namespace will keep ui independent game functionality
+(def computer-marker :x)
+(def opponent-marker :o)
 
 (defn init-board []
   (vec (repeat 9 nil)))
@@ -50,6 +58,16 @@
   (do 
     (prompt board)
     (read-until-valid board)))
+
+(defn move-computer 
+  "Returns new board with computer's move marked"
+  [board] 
+  (move-player board (find-computer-move board) computer-marker))
+
+(defn move-opponent 
+  "Returns new board with the opponent's (human player) move marked"
+  [board position]
+  (move-player board position opponent-marker))
 
 (defn next-move 
   "Returns a new board containing the next move, either from the human player
