@@ -62,7 +62,7 @@
 (defn move-computer 
   "Returns new board with computer's move marked"
   [board] 
-  (move-player board (find-computer-move board) computer-marker))
+  (move-player board (find-computer-move board computer-marker opponent-marker) computer-marker))
 
 (defn move-opponent 
   "Returns new board with the opponent's (human player) move marked"
