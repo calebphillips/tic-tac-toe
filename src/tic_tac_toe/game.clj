@@ -1,6 +1,6 @@
 (ns tic-tac-toe.game
   (:gen-class)
-  (:use [tic-tac-toe.core :only [space-open? move-player 
+  (:use [tic-tac-toe.board :only [space-open? move-player 
                                  winner tie? moves-remaining?]]
         [tic-tac-toe.defensive-strategy :only [find-computer-move]]
         [tic-tac-toe.messages :only [error-prompt prompt announce-victory

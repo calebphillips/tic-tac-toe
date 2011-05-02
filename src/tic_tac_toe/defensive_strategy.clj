@@ -1,6 +1,5 @@
 (ns tic-tac-toe.defensive-strategy
-  (:use [tic-tac-toe.core :only 
-         [winner all-moves rows columns empty-cells]]))
+  (:use [tic-tac-toe.board :only [winner all-moves rows columns empty-cells]]))
 
 ; Delete these! They are duplicated in game
 (def computer-marker :x)

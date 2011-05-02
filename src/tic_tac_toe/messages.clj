@@ -1,5 +1,5 @@
 (ns tic-tac-toe.messages
-  (:use [tic-tac-toe.core :only [rows]]
+  (:use [tic-tac-toe.board :only [rows]]
         [clojure.string :only [join]]))
 
 (defn format-player [p]

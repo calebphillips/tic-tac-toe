@@ -1,6 +1,6 @@
-(ns tic-tac-toe.core-spec
+(ns tic-tac-toe.board-spec
   (:use [speclj.core]
-        [tic-tac-toe.core]))
+        [tic-tac-toe.board]))
 
 (describe 
   "Checking for a winner"
@@ -106,6 +106,17 @@
       (should-not (moves-remaining? [:x :o :x
                                      :o :x :o
                                      :o :x :o])))
-
   (it "returns truthy"
       (should (moves-remaining? [:x :o nil nil nil nil nil nil nil]))))
+
+(describe 
+  "Moving a player"
+
+  (it "updates the board with the move"
+      (should= [nil :x nil nil nil nil nil nil :o]
+               (move-player [nil :x nil nil nil nil nil nil nil] 8 :o)))
+
+  (it "throws an exception if the space is already taken"
+      (should-throw IllegalArgumentException "That space is already taken."
+                    (move-player [:x nil nil nil nil nil nil nil nil] 0 :o))))
+  

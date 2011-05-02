@@ -1,4 +1,4 @@
-(ns tic-tac-toe.core)
+(ns tic-tac-toe.board)
 
 (defn rows 
   "Returns a seq of 3 seqs for the rows of the board"
