@@ -1,7 +1,8 @@
 (ns tic-tac-toe.game
   (:gen-class)
-  (:use [tic-tac-toe.board :only [space-open? move-player 
-                                 winner tie? moves-remaining?]]
+  (:use [tic-tac-toe.board :only [init-board move-player 
+                                  winner tie? moves-remaining?
+                                  is-valid?]]
         [tic-tac-toe.defensive-strategy :only [find-computer-move]]
         [tic-tac-toe.messages :only [error-prompt prompt announce-victory
                                      announce-tie display-welcome]]))
@@ -10,19 +11,6 @@
 ; while this namespace will keep ui independent game functionality
 (def computer-marker :x)
 (def opponent-marker :o)
-
-(defn init-board []
-  (vec (repeat 9 nil)))
-
-(defn within-range? [move]
-  (< -1 move 9))
-
-(defn is-valid? 
-  "Returns whether or not this move is valid given the current state
-  of the board"
-  [board move]
-  (and (within-range? move)
-       (space-open? board move)))
 
 (defn read-number 
   "Read one number from the player. Return the number if it is a valid move for
@@ -66,16 +54,8 @@
 
 (defn move-opponent 
   "Returns new board with the opponent's (human player) move marked"
-  [board position]
-  (move-player board position opponent-marker))
-
-(defn next-move 
-  "Returns a new board containing the next move, either from the human player
-  or the computer"
   [board]
-  (if (even? (count (remove nil? board)))
-    (move-opponent board (get-opponent-move board))
-    (move-computer board)))
+  (move-player board (get-opponent-move board) opponent-marker))
 
 (defn print-status-messages 
   "Prints messages about the status of the game: ended in tie, computer won, etc."
@@ -88,11 +68,12 @@
 (defn game 
   "The main loop for the game, including taking user input and determining
   the outcome."
-  []
-  (loop [board (next-move (init-board))]
-    (print-status-messages board)
-    (when (moves-remaining? board)
-      (recur (next-move board)))))
+  ([]
+   (game (move-opponent (init-board)) move-computer move-opponent))
+  ([board this-move next-move]
+   (print-status-messages board)
+   (when (moves-remaining? board)
+     (recur (this-move board) next-move this-move))))
 
 (defn -main [& args]
   (do (display-welcome) (game)))

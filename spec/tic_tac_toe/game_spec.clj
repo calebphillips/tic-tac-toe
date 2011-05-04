@@ -1,6 +1,7 @@
 (ns tic-tac-toe.game-spec
   (:use [speclj.core]
         [tic-tac-toe.game]
+        [tic-tac-toe.board :only [init-board]]
         [clojure.string :only [join]]))
 
 (defn to-input [& moves]
@@ -50,15 +51,5 @@
                       (print-status-messages [:x :o :x
                                        :o :x :o
                                        :o :x :o]))))))
-(describe 
-  "Recording the human player's move"
-  (it "updates the board"
-      (should= [:o nil nil nil nil nil nil nil nil]
-               (move-opponent [nil nil nil nil nil nil nil nil nil] 0)))
-
-  (it "throw an exception if the space is already taken"
-      (should-throw IllegalArgumentException "That space is already taken."
-                    (move-opponent [:x nil nil nil nil nil nil nil nil] 0))))
-                                  
 
       

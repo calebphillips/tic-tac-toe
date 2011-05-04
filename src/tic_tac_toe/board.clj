@@ -1,5 +1,8 @@
 (ns tic-tac-toe.board)
 
+(defn init-board []
+  (vec (repeat 9 nil)))
+
 (defn rows 
   "Returns a seq of 3 seqs for the rows of the board"
   [board]
@@ -45,8 +48,17 @@
   (not (or (winner board)
            (tie? board))))
 
+
 (defn space-open? [board move]
   (some #{move} (empty-cells board)))
+
+(defn is-valid? 
+  "Returns whether or not this move is valid given the current state
+  of the board"
+  [board move]
+  (and (< -1 move 9)
+       (space-open? board move)))
+
 
 (defn all-moves 
   "Returns lazy seq of couplets representing all possibles moves and 
