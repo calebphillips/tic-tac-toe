@@ -17,35 +17,57 @@
   "Selecting whether to play as X or O"
   (it "prompts the player to choose X or O"
       (let [output (with-out-str
-                     (with-in-str (to-input 1 9 6) (game)))]
+                     (with-in-str (to-input 1 1 9 6) (game)))]
         (should (re-seq #"Would you like to play as:" output))
         (should (re-seq #"1\) X" output))
-        (should (re-seq #"2\) O" output))))
+        (should (re-seq #"2\) O" output))
+        (should (re-seq #"3\) Neither" output))))
 
-  ; (it "displays the correct move prompt when playing as X"
-  ; (let [output (with-out-str
-  ; (with-in-str (to-input 1 1 9 6) (game)))]
-  ; (should (re-seq #"Please select a move for 'X'" output))))
+  (it "displays the correct move prompt when playing as X"
+      (let [output (with-out-str
+                     (with-in-str (to-input 1 1 9 6) (game)))]
+        (should (re-seq #"Please select a move for 'X'" output))))
 
   (it "displays the correct move prompt when playing as O"
       (let [output (with-out-str
-                     (with-in-str (to-input 2 1 9 6) (game)))]
+                     (with-in-str (to-input 2 2 1 9 6) (game)))]
         (should (re-seq #"Please select a move for 'O'" output)))))
 
+(describe
+  "Picking the player"
+  (it "sets players correctly when the person chooses to play as X"
+    (let [[player1 player2] (with-in-str "1\n" (get-players))]
+      (should= :x (:mark player1))
+      (should= move-human (:mover player1)) 
+      (should= :o (:mark player2))
+      (should= move-computer (:mover player2))))
 
+  (it "sets players correctly when the person chooses to play as O"
+    (let [[player1 player2] (with-in-str "2\n" (get-players))]
+      (should= :x (:mark player1))
+      (should= move-computer (:mover player1))
+      (should= :o (:mark player2))
+      (should= move-human (:mover player2))))
+
+  (it "sets players correctly when the person chooses computer vs computer "
+    (let [[player1 player2] (with-in-str "3\n" (get-players))]
+      (should= :x (:mark player1))
+      (should= move-computer (:mover player1))
+      (should= :o (:mark player2))
+      (should= move-computer (:mover player2)))))
 
 (describe 
   "Playing"
   (it "validates the input"
-      (game-with-input-should (to-input "A" 1 9 6) #"Invalid move")
-      (game-with-input-should (to-input 14 1 9 6) #"Invalid move")
-      (game-with-input-should (to-input 1 1 9 6) #"Invalid move"))
+      (game-with-input-should (to-input 1 "A" 1 9 6) #"Invalid move")
+      (game-with-input-should (to-input 1 14 1 9 6) #"Invalid move")
+      (game-with-input-should (to-input 1 1 1 9 6) #"Invalid move"))
 
   (it "shows the winner"
-      (game-with-input-should (to-input 1 9 6) #"X has won the game!")) 
+      (game-with-input-should (to-input 2 1 9 6) #"X has won the game!")) 
 
   (it "shows a tie message"
-      (game-with-input-should (to-input 1 9 8 3 4) #"The game has ended in a tie.")))
+      (game-with-input-should (to-input 1 1 9 8 3 4) #"The game has ended in a tie.")))
 
 ; TODO The STDOUT prompts are muddling up the test output.  This function has
 ; side effects (the prompts) and a return value (the move), so I don't want to wrap
@@ -54,16 +76,16 @@
 (describe 
   "Reading input"
   (it "reads until it gets a number" 
-      (should= 8 (with-in-str (to-input "A" "B" "C" "D" 9) (read-until-valid (init-board)))))
+      (should= 8 (with-in-str (to-input "A" "B" "C" "D" 9) (read-until-valid (init-board) :x))))
 
   (it "reads until the number is in range" 
-      (should= 4 (with-in-str (to-input 11 16 17 23 12312 5) (read-until-valid (init-board)))))
+      (should= 4 (with-in-str (to-input 11 16 17 23 12312 5) (read-until-valid (init-board) :x))))
 
   (it "reads until the number is a valid move" 
-      (should= 3 (with-in-str (to-input 1 2 3 4) (read-until-valid [:x :x :x nil nil nil nil nil nil]))))
+      (should= 3 (with-in-str (to-input 1 2 3 4) (read-until-valid [:x :x :x nil nil nil nil nil nil] :x))))
 
   (it "decrements the number" 
-      (should= 0 (with-in-str (to-input 1) (read-until-valid (init-board)))))
+      (should= 0 (with-in-str (to-input 1) (read-until-valid (init-board) :x))))
   )
 
 (describe 

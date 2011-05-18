@@ -4,9 +4,6 @@
         [tic-tac-toe.defensive-strategy :only [find-computer-move]]
         [clojure.string :only [join]]))
 
-(def computer-marker :x)
-(def opponent-marker :o)
-
 (defn format-player [p]
   (.toUpperCase (name p)))
 
@@ -71,48 +68,59 @@
 
 (defn read-until-valid 
   "Reads input from the player until a valid move is entered"
-  [board]
-  (prompt "Please select a move for 'O' [1-9]: ")
+  [board mark]
+  (prompt (str "Please select a move for '" (format-player mark) "' [1-9]: "))
   (let [input (read-number)]
     (if (and input (< 0 input 10) (is-valid? board (dec input)))
       (dec input)
       (do
-        (prompt "Invalid move, please select another move: ")
-        (recur board)))))
-      
-(defn get-opponent-move [board]
-  (read-until-valid board))
+        (println "Invalid move.")
+        (recur board mark)))))
 
-(defn move-opponent 
-  "Returns new board with the opponent's (human player) move marked"
-  [board]
-  (move-player board (get-opponent-move board) opponent-marker))
+(defn get-human-move [board mark]
+  (read-until-valid board mark))
+
+(defn move-human 
+  "Returns new board with the human player's move marked"
+  [board my-mark opp-mark]
+  (move-player board (get-human-move board my-mark) my-mark))
 
 (defn move-computer 
   "Returns new board with computer's move marked"
-  [board] 
-  (move-player board (find-computer-move board computer-marker opponent-marker) computer-marker))
+  [board my-mark opp-mark] 
+  (move-player board (find-computer-move board my-mark opp-mark) my-mark))
 
-(defn- get-players []
+(def game-types 
+  { 1 [{:mark :x :mover move-human} {:mark :o :mover move-computer}] 
+    2 [{:mark :x :mover move-computer} {:mark :o :mover move-human}]
+    3 [{:mark :x :mover move-computer} {:mark :o :mover move-computer}] })
+
+(defn get-players []
   (println)
   (println "Would you like to play as:")
   (println "1) X")
   (println "2) O")
-  (println))
+  (println "3) Neither - let the computer duke it out.")
+  (println)
+  (prompt "Choice: ")
+  (game-types (read-number)))
+
+
+(defn move [board current next]
+  ((:mover current) board (:mark current) (:mark next)))
 
 (defn game 
   "The main loop for the game, including taking user input and determining
   the outcome."
   ([]
-   (let [board (init-board)]
-     (get-players)
+   (let [board (init-board) [player1 player2] (get-players)]
      (display-board board)
-     (game (move-opponent board) move-computer move-opponent)))
-  ([board this-move next-move]
+     (game (move board player1 player2) player2 player1)))
+  ([board this-player next-player]
    (display-board board)
    (print-status-messages board)
    (when (moves-remaining? board)
-     (recur (this-move board) next-move this-move))))
+     (recur (move board this-player next-player) next-player this-player))))
 
 (defn -main [& args]
   (do (display-welcome) (game)))
