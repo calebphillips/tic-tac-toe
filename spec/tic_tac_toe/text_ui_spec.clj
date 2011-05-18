@@ -1,8 +1,9 @@
-(ns tic-tac-toe.game-spec
+(ns tic-tac-toe.text-ui-spec
   (:use [speclj.core]
-        [tic-tac-toe.game]
+        [tic-tac-toe.text-ui]
         [tic-tac-toe.board :only [init-board]]
         [clojure.string :only [join]]))
+
 
 (defn to-input [& moves]
   (join "\n" moves))
@@ -12,18 +13,36 @@
                   (with-out-str
                     (with-in-str input
                       (game))))))
+
+(describe
+  "Formatting a cell on the board for display"
+  (it "returns spaces for a nil spot on the board"
+      (should= "   " (format-cell nil)))
+  
+  (it "returns an uppercase character for a keyword"
+      (should= " X " (format-cell :x))
+      (should= " O " (format-cell :o))))
+
+(describe
+  "Formatting the board"
+  (it "represents the current state"
+      (should= "XXXOXOOOO"
+               (apply str 
+                      (filter #{\X \O} 
+                              (format-board [:x :x :x :o :x :o :o :o :o]))))))
+
 (describe "Playing"
   (it "validates the input"
     (game-with-input-should (to-input "A" 1 9 6) #"Invalid move")
     (game-with-input-should (to-input 14 1 9 6) #"Invalid move")
     (game-with-input-should (to-input 1 1 9 6) #"Invalid move"))
-
+          
   (it "shows the winner"
     (game-with-input-should (to-input 1 9 6) #"X has won the game!")) 
 
   (it "shows a tie message"
     (game-with-input-should (to-input 1 9 8 3 4) #"The game has ended in a tie.")))
-
+          
 (describe "A single iteration of the read loop"
   (it "reads a number in the valid range"
     (should= 4 (with-in-str "5"
@@ -51,5 +70,3 @@
                       (print-status-messages [:x :o :x
                                        :o :x :o
                                        :o :x :o]))))))
-
-      

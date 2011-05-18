@@ -4,4 +4,4 @@
                  [org.clojure/clojure-contrib "1.2.0"]]
   :dev-dependencies [[speclj "1.2.0"]]
   :test-path "spec/"
-  :main tic-tac-toe.game)
+  :main tic-tac-toe.text-ui)
