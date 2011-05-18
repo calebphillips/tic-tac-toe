@@ -81,14 +81,12 @@
   (read-until-valid board mark))
 
 (defn move-human 
-  "Returns new board with the human player's move marked"
-  [board my-mark opp-mark]
-  (move-player board (get-human-move board my-mark) my-mark))
+  [board mark]
+  (move-player board (get-human-move board mark) mark))
 
 (defn move-computer 
-  "Returns new board with computer's move marked"
-  [board my-mark opp-mark] 
-  (move-player board (find-computer-move board my-mark opp-mark) my-mark))
+  [board mark] 
+  (move-player board (find-computer-move board mark) mark))
 
 (def game-types 
   { 1 [{:mark :x :mover move-human} {:mark :o :mover move-computer}] 
@@ -107,7 +105,7 @@
 
 
 (defn move [board current next]
-  ((:mover current) board (:mark current) (:mark next)))
+  ((:mover current) board (:mark current)))
 
 (defn game 
   "The main loop for the game, including taking user input and determining
