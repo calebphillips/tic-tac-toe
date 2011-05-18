@@ -47,29 +47,15 @@
 (defn announce-tie [board]
   (annouce board "The game has ended in a tie."))
 
-(defn prompt [board]
-  (do
-    (display-board board)
-    (print "Please select a move for 'O' [1-9]: ")
-    (flush))) 
-
-(defn error-prompt []
-  (do 
-    (print "Invalid move, please select another move: ")
-    (flush)))
+(defn- prompt [s]
+  (print s)
+  (flush))
 
 (defn display-welcome []
   (let [banner (apply str (repeat 50 "="))]
     (println (str banner 
                   "\n\n        Tic Tac Toe\n\n" 
                   banner))))
-
-(defn print-loop-prompt 
-  "Prints any additional prompts that *may* be need during
-  iterations of the input loop"
-  [move]
-  (when-not move
-    (error-prompt)))
 
 (defn print-status-messages 
   "Prints messages about the status of the game: ended in tie, computer won, etc."
@@ -79,33 +65,23 @@
     (when (tie? board)
       (announce-tie board))))
 
-(defn read-number 
-  "Read one number from the player. Return the number if it is a valid move for
-  the current state of the board (the space isn't already taken), otherwise nil"
-  [board]
-  (let [move (dec (Integer. (read-line)))] 
-    (when (is-valid? board move)
-      move)))
-
-(defn read-one-move 
-  "Reads one move from the human player, returning either the index of the
-  move or nil if the player did not enter valid input"
-  [board]
-  (try (read-number board)
+(defn read-number []
+  (try (Integer. (read-line))
     (catch NumberFormatException _ nil)))
 
 (defn read-until-valid 
   "Reads input from the player until a valid move is entered"
   [board]
-  (loop [m (read-one-move board)]
-    (print-loop-prompt m)
-    (if m m
-      (recur (read-one-move board)))))
-
+  (prompt "Please select a move for 'O' [1-9]: ")
+  (let [input (read-number)]
+    (if (and input (< 0 input 10) (is-valid? board (dec input)))
+      (dec input)
+      (do
+        (prompt "Invalid move, please select another move: ")
+        (recur board)))))
+      
 (defn get-opponent-move [board]
-  (do 
-    (prompt board)
-    (read-until-valid board)))
+  (read-until-valid board))
 
 (defn move-opponent 
   "Returns new board with the opponent's (human player) move marked"
@@ -117,12 +93,23 @@
   [board] 
   (move-player board (find-computer-move board computer-marker opponent-marker) computer-marker))
 
+(defn- get-players []
+  (println)
+  (println "Would you like to play as:")
+  (println "1) X")
+  (println "2) O")
+  (println))
+
 (defn game 
   "The main loop for the game, including taking user input and determining
   the outcome."
   ([]
-   (game (move-opponent (init-board)) move-computer move-opponent))
+   (let [board (init-board)]
+     (get-players)
+     (display-board board)
+     (game (move-opponent board) move-computer move-opponent)))
   ([board this-move next-move]
+   (display-board board)
    (print-status-messages board)
    (when (moves-remaining? board)
      (recur (this-move board) next-move this-move))))
