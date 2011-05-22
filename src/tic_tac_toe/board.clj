@@ -24,10 +24,10 @@
   collection, if any that contains three of the same value"
   [colls]
   (->>  (map #(partition-by identity %) colls)
-        (apply concat) 
-        (remove #(some nil? %))
-        (filter #(= 3 (count %)))
-        ffirst))
+    (apply concat) 
+    (remove #(some nil? %))
+    (filter #(= 3 (count %)))
+    ffirst))
 
 (defn winner 
   "Returns the keyword for the winner, if any, otherwise returns nil"
@@ -48,17 +48,12 @@
   (not (or (winner board)
            (tie? board))))
 
-
-(defn space-open? [board move]
-  (some #{move} (empty-cells board)))
-
-(defn is-valid? 
+(defn valid-move? 
   "Returns whether or not this move is valid given the current state
   of the board"
   [board move]
   (and (< -1 move 9)
-       (space-open? board move)))
-
+       (not (board move))))
 
 (defn all-moves 
   "Returns lazy seq of couplets representing all possibles moves and 
@@ -66,7 +61,7 @@
   [board player]
   (map #(vector (assoc-in board [%] player) %) (empty-cells board)))
 
-(defn move-player [board position player]
-  (if (get-in board [position])
+(defn move-player [board move player]
+  (if (board move)
     (throw (IllegalArgumentException. "That space is already taken."))
-    (assoc-in board [position] player)))
+    (assoc board move player)))

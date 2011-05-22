@@ -1,6 +1,6 @@
 (ns tic-tac-toe.text-ui
   (:gen-class)
-  (:use [tic-tac-toe.board :only [rows move-player is-valid? init-board winner tie? moves-remaining?]]
+  (:use [tic-tac-toe.board :only [rows move-player valid-move? init-board winner tie? moves-remaining?]]
         [tic-tac-toe.defensive-strategy :only [find-computer-move]]
         [clojure.string :only [join]]))
 
@@ -71,7 +71,7 @@
   [board mark]
   (prompt (str "Please select a move for '" (format-player mark) "' [1-9]: "))
   (let [input (read-number)]
-    (if (and input (< 0 input 10) (is-valid? board (dec input)))
+    (if (and input (< 0 input 10) (valid-move? board (dec input)))
       (dec input)
       (do
         (println "Invalid move.")
