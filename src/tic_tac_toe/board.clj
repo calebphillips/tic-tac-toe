@@ -19,20 +19,12 @@
   (let [coords [[0 4 8] [6 4 2]]]
     (map #(for [n %] (nth board n)) coords)))
 
-(defn- three-in-a-row 
-  "Takes a collection of collections and returns the value of the first
-  collection, if any that contains three of the same value"
-  [colls]
-  (->>  (map #(partition-by identity %) colls)
-    (apply concat) 
-    (remove #(some nil? %))
-    (filter #(= 3 (count %)))
-    ffirst))
-
 (defn winner 
   "Returns the keyword for the winner, if any, otherwise returns nil"
   [board]
-  (three-in-a-row (concat (rows board) (columns board) (diagonals board))))
+  (first 
+    (some #{[:x :x :x] [:o :o :o]}
+          (concat (rows board) (columns board) (diagonals board)))))
 
 (defn- indexed-board [board]
   (map vector (iterate inc 0) board))
