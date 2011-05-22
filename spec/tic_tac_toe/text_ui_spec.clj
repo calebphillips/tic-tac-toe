@@ -13,6 +13,21 @@
                     (with-in-str input
                       (game))))))
 
+(describe
+  "format-player"
+  (it "displays the upper case player name"
+      (should= "X" (format-player :x))
+      (should= "O" (format-player :o))))
+
+
+(describe
+  "Formatting the board"
+  (it "represents the current state"
+      (should= "XXXOXOOOO"
+               (apply str 
+                      (filter #{\X \O} 
+                              (format-board [:x :x :x :o :x :o :o :o :o]))))))
+
 (describe 
   "Selecting whether to play as X or O"
   (it "prompts the player to choose X or O"
@@ -35,26 +50,27 @@
 
 (describe
   "Picking the player"
-  (it "sets players correctly when the person chooses to play as X"
-    (let [[player1 player2] (with-in-str "1\n" (get-players))]
-      (should= :x (:mark player1))
-      (should= move-human (:mover player1)) 
-      (should= :o (:mark player2))
-      (should= move-computer (:mover player2))))
+  (binding [*out* (new java.io.StringWriter)]
+    (it "sets players correctly when the person chooses to play as X"
+        (let [[player1 player2] (with-in-str "1\n" (get-players))]
+          (should= :x (:mark player1))
+          (should= move-human (:mover player1)) 
+          (should= :o (:mark player2))
+          (should= move-computer (:mover player2))))
 
-  (it "sets players correctly when the person chooses to play as O"
-    (let [[player1 player2] (with-in-str "2\n" (get-players))]
-      (should= :x (:mark player1))
-      (should= move-computer (:mover player1))
-      (should= :o (:mark player2))
-      (should= move-human (:mover player2))))
+    (it "sets players correctly when the person chooses to play as O"
+        (let [[player1 player2] (with-in-str "2\n" (get-players))]
+          (should= :x (:mark player1))
+          (should= move-computer (:mover player1))
+          (should= :o (:mark player2))
+          (should= move-human (:mover player2))))
 
-  (it "sets players correctly when the person chooses computer vs computer "
-    (let [[player1 player2] (with-in-str "3\n" (get-players))]
-      (should= :x (:mark player1))
-      (should= move-computer (:mover player1))
-      (should= :o (:mark player2))
-      (should= move-computer (:mover player2)))))
+    (it "sets players correctly when the person chooses computer vs computer "
+        (let [[player1 player2] (with-in-str "3\n" (get-players))]
+          (should= :x (:mark player1))
+          (should= move-computer (:mover player1))
+          (should= :o (:mark player2))
+          (should= move-computer (:mover player2))))))
 
 (describe 
   "Playing"
@@ -69,23 +85,35 @@
   (it "shows a tie message"
       (game-with-input-should (to-input 1 1 9 8 3 4) #"The game has ended in a tie.")))
 
-; TODO The STDOUT prompts are muddling up the test output.  This function has
-; side effects (the prompts) and a return value (the move), so I don't want to wrap
-; the call in with-out-str, because I won't be able to get to my return value.
-; Maybe I need to do a binding to stub out the prompt?
 (describe 
   "Reading input"
-  (it "reads until it gets a number" 
-      (should= 8 (with-in-str (to-input "A" "B" "C" "D" 9) (read-until-valid (init-board) :x))))
+  (binding [*out* (new java.io.StringWriter)]
+    (it "reads until it gets a number" 
+        (should= 8 (with-in-str (to-input "A" "B" "C" "D" 9) (read-until-valid (init-board) :x))))
 
-  (it "reads until the number is in range" 
-      (should= 4 (with-in-str (to-input 11 16 17 23 12312 5) (read-until-valid (init-board) :x))))
+    (it "reads until the number is in range" 
+        (should= 4 (with-in-str (to-input 11 16 17 23 12312 5) (read-until-valid (init-board) :x))))
 
-  (it "reads until the number is a valid move" 
-      (should= 3 (with-in-str (to-input 1 2 3 4) (read-until-valid [:x :x :x nil nil nil nil nil nil] :x))))
+    (it "reads until the number is a valid move" 
+        (should= 3 (with-in-str (to-input 1 2 3 4) (read-until-valid [:x :x :x nil nil nil nil nil nil] :x))))
 
-  (it "decrements the number" 
-      (should= 0 (with-in-str (to-input 1) (read-until-valid (init-board) :x))))
+    (it "decrements the number" 
+        (should= 0 (with-in-str (to-input 1) (read-until-valid (init-board) :x))))
+    )
+
+  (it "prompts the player each time through the loop"
+      (should= 3 (count (re-seq #"Please select a move for 'X' \[1-9\]"
+                                (with-out-str
+                                  (with-in-str
+                                    (to-input "Z" "X" 1)
+                                    (read-until-valid (init-board) :x)))))))
+
+  (it "informs the player of invalid moves"
+      (should= 2 (count (re-seq #"Invalid move"
+                                (with-out-str
+                                  (with-in-str
+                                    (to-input "Z" "X" 1)
+                                    (read-until-valid (init-board) :x)))))))
   )
 
 (describe 
@@ -110,10 +138,3 @@
       (should= " X " (format-cell :x))
       (should= " O " (format-cell :o))))
 
-(describe
-  "Formatting the board"
-  (it "represents the current state"
-      (should= "XXXOXOOOO"
-               (apply str 
-                      (filter #{\X \O} 
-                              (format-board [:x :x :x :o :x :o :o :o :o]))))))

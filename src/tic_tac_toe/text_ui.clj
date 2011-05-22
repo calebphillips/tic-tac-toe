@@ -21,17 +21,11 @@
   (map #(join "|" %) (format-row-values board)))
 
 (defn format-board [board]
-  (str
-    "\n"
-    (join "\n-----------\n" (format-rows board))
-    "\n"))
-
-(defn display-board [board]
-  (println (format-board board)))
+  (str "\n" (join "\n-----------\n" (format-rows board)) "\n"))
 
 (defn annouce [board msg]
   (let [banner (apply str (repeat 40 "*"))] 
-    (display-board board)
+    (println format-board board)
     (println)
     (println banner)
     (println (str "    " msg))
@@ -71,21 +65,16 @@
   [board mark]
   (prompt (str "Please select a move for '" (format-player mark) "' [1-9]: "))
   (let [input (read-number)]
-    (if (and input (< 0 input 10) (valid-move? board (dec input)))
+    (if (and input (valid-move? board (dec input)))
       (dec input)
       (do
         (println "Invalid move.")
         (recur board mark)))))
 
-(defn get-human-move [board mark]
-  (read-until-valid board mark))
+(defn move-human [board mark]
+  (move-player board (read-until-valid board mark) mark))
 
-(defn move-human 
-  [board mark]
-  (move-player board (get-human-move board mark) mark))
-
-(defn move-computer 
-  [board mark] 
+(defn move-computer [board mark] 
   (move-player board (find-computer-move board mark) mark))
 
 (def game-types 
@@ -112,10 +101,10 @@
   the outcome."
   ([]
    (let [board (init-board) [player1 player2] (get-players)]
-     (display-board board)
+     (println format-board board)
      (game (move board player1 player2) player2 player1)))
   ([board this-player next-player]
-   (display-board board)
+   (println format-board board)
    (print-status-messages board)
    (when (moves-remaining? board)
      (recur (move board this-player next-player) next-player this-player))))
