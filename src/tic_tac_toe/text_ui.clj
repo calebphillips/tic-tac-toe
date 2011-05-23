@@ -25,7 +25,7 @@
 
 (defn annouce [board msg]
   (let [banner (apply str (repeat 40 "*"))] 
-    (println format-board board)
+    (println (format-board board))
     (println)
     (println banner)
     (println (str "    " msg))
@@ -38,31 +38,24 @@
 (defn announce-tie [board]
   (annouce board "The game has ended in a tie."))
 
-(defn- prompt [s]
-  (print s)
-  (flush))
-
-(defn display-welcome []
-  (let [banner (apply str (repeat 50 "="))]
-    (println (str banner 
-                  "\n\n        Tic Tac Toe\n\n" 
-                  banner))))
-
-(defn print-status-messages 
-  "Prints messages about the status of the game: ended in tie, computer won, etc."
+(defn print-results
   [board]
   (if-let [w (winner board)]
     (announce-victory board w)
-    (when (tie? board)
-      (announce-tie board))))
+    (announce-tie board)))
 
 (defn read-number []
   (try (Integer. (read-line))
     (catch NumberFormatException _ nil)))
 
+(defn- prompt [s]
+  (print s)
+  (flush))
+
 (defn read-until-valid 
   "Reads input from the player until a valid move is entered"
   [board mark]
+  (println (format-board board))
   (prompt (str "Please select a move for '" (format-player mark) "' [1-9]: "))
   (let [input (read-number)]
     (if (and input (valid-move? board (dec input)))
@@ -77,21 +70,25 @@
 (defn move-computer [board mark] 
   (move-player board (find-computer-move board mark) mark))
 
+(defn move-computer-and-display [board mark]
+  (let [board (move-computer board mark)]
+    (println (format-board board))
+    board))
+
 (def game-types 
   { 1 [{:mark :x :mover move-human} {:mark :o :mover move-computer}] 
     2 [{:mark :x :mover move-computer} {:mark :o :mover move-human}]
-    3 [{:mark :x :mover move-computer} {:mark :o :mover move-computer}] })
+    3 [{:mark :x :mover move-computer-and-display} {:mark :o :mover move-computer-and-display}] })
 
 (defn get-players []
   (println)
-  (println "Would you like to play as:")
-  (println "1) X")
-  (println "2) O")
-  (println "3) Neither - let the computer duke it out.")
+  (println "Select game type:")
+  (println "1) Human    vs. Computer")
+  (println "2) Computer vs. Human")
+  (println "3) Computer vs. Computer")
   (println)
   (prompt "Choice: ")
   (game-types (read-number)))
-
 
 (defn move [board current next]
   ((:mover current) board (:mark current)))
@@ -101,14 +98,18 @@
   the outcome."
   ([]
    (let [board (init-board) [player1 player2] (get-players)]
-     (println format-board board)
-     (game (move board player1 player2) player2 player1)))
+     (game board player1 player2)))
   ([board this-player next-player]
-   (println format-board board)
-   (print-status-messages board)
-   (when (moves-remaining? board)
-     (recur (move board this-player next-player) next-player this-player))))
+   (let [board (move board this-player next-player)]
+     (if (moves-remaining? board)
+       (recur board next-player this-player)
+       (print-results board)))))
+
+(defn display-welcome []
+  (let [banner (apply str (repeat 50 "="))]
+    (println (str banner 
+                  "\n\n        Tic Tac Toe\n\n" 
+                  banner))))
 
 (defn -main [& args]
   (do (display-welcome) (game)))
-
