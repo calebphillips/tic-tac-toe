@@ -48,7 +48,7 @@
   opponent on either of the diagonals"
   [mark board]
   (when (= 2 (count (find-trappable-corners board mark)))
-           (some cross-points (empty-cells board))))
+    (some cross-points (empty-cells board))))
 
 (defn- prevent-corner-trap 
   "Returns a move that will prevent the opponent from moving into a corner
