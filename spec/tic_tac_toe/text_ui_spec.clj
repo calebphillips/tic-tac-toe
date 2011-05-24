@@ -54,8 +54,8 @@
       (should (re-seq #"The game has ended in a tie"
                       (with-out-str
                         (print-results [:x :o :x
-                                                :o :x :o
-                                                :o :x :o]))))))
+                                        :o :x :o
+                                        :o :x :o]))))))
 
 (describe 
   "Reading input"
@@ -125,8 +125,23 @@
     (it "sets players correctly when the person chooses computer vs computer "
         (let [[player1 player2] (no-out (with-in-str "3\n" (get-players)))]
           (should= {:mark :x :mover move-computer-and-display} player1)
+          (should= {:mark :o :mover move-computer-and-display} player2)))
+
+    (it "reads game type choices until it gets a valid one"
+        (let [[player1 player2] (no-out (with-in-str "9\n8\n7\n6\n5\nHELLO\n3\n" (get-players)))]
+          (should= {:mark :x :mover move-computer-and-display} player1)
           (should= {:mark :o :mover move-computer-and-display} player2)))))
 
+
+
+
+(defn get-displayed-boards 
+  "Captures and returns board states that are displayed during the game"
+  [& moves]
+  (let [boards (atom [])]
+    (binding [format-board (fn [board] (swap! boards conj board))]
+      (no-out (with-in-str (apply moves-str moves) (game)))
+      @boards)))
 
 (describe 
   "Playing"
@@ -140,8 +155,43 @@
 
   (it "shows a tie message"
       (game-with-input-should (moves-str 1 1 9 8 3 4) #"The game has ended in a tie."))
-  
-  
-  )
 
+  (describe 
+    "displays the board at appropriate times"
+    (describe 
+      "for human vs. computer"
+      (it "starts with an empty board"
+          (should= [nil nil nil nil nil nil nil nil nil] 
+                   (first (get-displayed-boards 1 1 9 6))))
+
+      (it "ends with the final state of the board"
+          (should= [:x :o nil nil :o :x nil :o :x] 
+                   (last (get-displayed-boards 1 1 9 6)))))
+
+    (describe 
+      "for computer vs. human"
+      (it "starts with the computer's first move"
+          (should= [nil nil nil nil :x nil nil nil nil]
+                   (first (get-displayed-boards 2 1 9))))
+
+      (it "ends with the final state of the board"
+          (should= [:o nil :x nil :x nil :x nil :o]
+                   (last (get-displayed-boards 2 1 9))))
+
+      (it "never shows an empty board"
+          (should-not (some #{[nil nil nil nil nil nil nil nil nil]}
+                            (get-displayed-boards 2 1 9)))))
+
+    (describe
+      "for computer vs. computer"
+      (it "displays the board a move at a time"
+          (should= [nil nil nil nil :x nil nil nil nil]
+                   (first (get-displayed-boards 3)))
+
+          (should= [:o nil nil nil :x nil nil nil nil]
+                   (second (get-displayed-boards 3))))
+
+      (it "ends with the final state of the board"
+          (should= [:o :o :x :x :x :o :o :x :x]
+                   (last (get-displayed-boards 3)))))))
 
