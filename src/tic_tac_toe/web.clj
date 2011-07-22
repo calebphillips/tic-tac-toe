@@ -6,6 +6,12 @@
             [hiccup.page-helpers :as page]
             [compojure.route :as route]))
 
+(def game-types
+  {1 {:description "Human vs. Computer"}
+   2 {:description "Computer vs. Human"}
+   3 {:description "Computer vs. Computer"}
+   })
+
 (defn choose-game-type-page []
   (h/html 
     [:head
@@ -15,7 +21,9 @@
                       "/stylesheets/screen.css")
     [:body
      [:h1 "Tic Tac Toe"]
-     [:h2 "Choose Game Type"]]))
+     [:h2 "Choose Game Type"]
+     [:ol
+      (map (fn [t] [:li (:description (val t))])  game-types)]]))
 
 (defroutes 
   routes

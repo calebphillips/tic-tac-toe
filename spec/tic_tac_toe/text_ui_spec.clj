@@ -95,7 +95,7 @@
       (let [output (with-out-str
                      (with-in-str (moves-str 1 1 9 6) (game)))]
         (should (re-seq #"Select game type:" output))
-        (should (re-seq #"1\) Human    vs. Computer" output))
+        (should (re-seq #"1\) Human vs. Computer" output))
         (should (re-seq #"2\) Computer vs. Human" output))
         (should (re-seq #"3\) Computer vs. Computer" output))))
 

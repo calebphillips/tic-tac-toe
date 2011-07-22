@@ -75,22 +75,26 @@
     (println (format-board board))
     board))
 
-(def game-types 
-  { 1 [{:mark :x :mover move-human} {:mark :o :mover move-computer}] 
-   2 [{:mark :x :mover move-computer} {:mark :o :mover move-human}]
-   3 [{:mark :x :mover move-computer-and-display} {:mark :o :mover move-computer-and-display}] })
+(def game-types
+  {1 {:description "Human vs. Computer"
+      :players [{:mark :x :mover move-human} {:mark :o :mover move-computer}] }
+   2 {:description "Computer vs. Human"
+      :players [{:mark :x :mover move-computer} {:mark :o :mover move-human}]}
+   3 {:description "Computer vs. Computer"
+      :players [{:mark :x :mover move-computer-and-display} {:mark :o :mover move-computer-and-display}]}
+   })
 
 (defn get-players []
   (println)
   (println "Select game type:")
-  (println "1) Human    vs. Computer")
-  (println "2) Computer vs. Human")
-  (println "3) Computer vs. Computer")
+  (doseq [[number {description :description}] game-types] 
+    (println (str number ") " description)))
   (println)
+
   (prompt "Choice: ")
   (let [game-type (game-types (read-number))]
     (if game-type
-      game-type
+      (:players game-type)
       (recur))))
 
 (defn move [board current next]
