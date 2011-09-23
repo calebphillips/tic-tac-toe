@@ -12,10 +12,45 @@
 
     <title>Hello Tic Tac Toe</title>
     <style>
+      body {
+        font-family: arial;
+      }
+
       td {
         text-align: center;
         width: 100px;
         height: 100px;
+        font-family: arial;
+        font-size: 3em;
+      }
+
+      td#square0 {
+        border-right: 1px solid #999;
+        border-bottom: 1px solid #999;
+      }
+      td#square1 {
+        border-right: 1px solid #999;
+        border-bottom: 1px solid #999;
+      }
+      td#square2 {
+        border-bottom: 1px solid #999;
+      }
+      td#square3 {
+        border-right: 1px solid #999;
+      }
+      td#square4 {
+        border-right: 1px solid #999;
+      }
+      td#square6 {
+        border-right: 1px solid #999;
+        border-top: 1px solid #999;
+      }
+      td#square7 {
+        border-right: 1px solid #999;
+        border-top: 1px solid #999;
+      }
+      td#square8 {
+        border-top: 1px solid #999;
       }
 
       .clicked {
@@ -37,7 +72,7 @@
   <body>
     <h1>Tic Tac Toe</h1>
 
-    <table border="1">
+    <table>
       <tr>
         <td id="square0" class="square"></td>
         <td id="square1" class="square"></td>

@@ -22,7 +22,9 @@
   (let [after-human-move 
         (brd/move-player @board-state move :x)
         after-computer-move 
-        (brd/move-player after-human-move (defense/find-computer-move after-human-move :o) :o)]
+        (brd/move-player after-human-move 
+                         (defense/find-computer-move after-human-move :o) 
+                         :o)]
     (reset! board-state after-computer-move)))
 
 (defn display-message [s]
