@@ -26,7 +26,7 @@
     (some #{[:x :x :x] [:o :o :o]}
           (concat (rows board) (columns board) (diagonals board)))))
 
-(defn- indexed-board [board]
+(defn indexed-board [board]
   (map vector (iterate inc 0) board))
 
 (defn empty-cells [board] 
@@ -55,5 +55,5 @@
 
 (defn move-player [board move player]
   (if (board move)
-    (throw (IllegalArgumentException. "That space is already taken."))
+    (js/alert (str "Already have a move in " move))
     (assoc board move player)))

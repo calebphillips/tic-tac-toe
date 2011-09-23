@@ -1,0 +1,4 @@
+(use 'cljs.closure)
+(def opts {:output-to "tic-tac-toe.js" :output-dir "out"})
+(build "src" opts)
+

@@ -1,0 +1,68 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js">   <!--<![endif]-->
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <title>Hello Tic Tac Toe</title>
+    <style>
+      td {
+        text-align: center;
+        width: 100px;
+        height: 100px;
+      }
+
+      .clicked {
+        background-color: red;
+      }
+
+      #messages {
+        margin-top: 20px;
+        border: 1px solid black;
+        width: 300px;
+        min-height: 30px;
+      }
+    </style>
+    <!--[if lt IE 9]>
+        <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+  </head>
+  <body>
+    <h1>Tic Tac Toe</h1>
+
+    <table border="1">
+      <tr>
+        <td id="square0" class="square"></td>
+        <td id="square1" class="square"></td>
+        <td id="square2" class="square"></td>
+      </tr>
+      <tr>
+        <td id="square3" class="square"></td>
+        <td id="square4" class="square"></td>
+        <td id="square5" class="square"></td>
+      </tr>
+      <tr>
+        <td id="square6" class="square"></td>
+        <td id="square7" class="square"></td>
+        <td id="square8" class="square"></td>
+      </tr>
+    </table>
+
+    <div id="messages"></div>
+
+    <div id="content">
+      <script type="text/javascript" src="out/goog/base.js"></script>
+      <script type="text/javascript" src="tic-tac-toe.js"></script>
+      <script type="text/javascript">
+        goog.require('tic_tac_toe.web');
+      </script>
+  </body>
+</html>
+

@@ -1,5 +1,5 @@
-(ns tic-tac-toe.defensive-strategy
-  (:use [tic-tac-toe.board :only [winner all-moves rows columns empty-cells]]))
+(ns tic-tac-toe.defensive
+  (:require [tic-tac-toe.board :as brd])) ;:only [winner all-moves rows columns empty-cells]]))
 
 (def corners #{0 2 6 8})
 (def cross-points #{1 3 5 7})
@@ -10,7 +10,7 @@
 (defn- find-win-for [board player]
   (second 
     (first 
-      (filter #(winner (first %)) (all-moves board player))))) 
+      (filter #(brd/winner (first %)) (brd/all-moves board player))))) 
 
 (defn lonely-opponent? 
   "Returns true if coll contains only components or empty spaces"
@@ -18,10 +18,10 @@
   (and (some #{(other-mark mark)} coll) (not-any? #{mark} coll)))
 
 (defn containing-row [board position]
-  (nth (rows board) (quot position 3)))
+  (nth (brd/rows board) (quot position 3)))
 
 (defn containing-column [board position]
-  (nth (columns board) (rem position 3)))
+  (nth (brd/columns board) (rem position 3)))
 
 (defn is-trappable? 
   "Takes a board and a corner position a returns true if the only player
@@ -32,7 +32,7 @@
 
 (defn- find-trappable-corners [board mark]
   (filter #(is-trappable? board % mark) 
-          (filter corners (empty-cells board))))
+          (filter corners (brd/empty-cells board))))
 
 (defn- move-to-win [mark board]
   (find-win-for board mark))
@@ -48,7 +48,7 @@
   opponent on either of the diagonals"
   [mark board]
   (when (= 2 (count (find-trappable-corners board mark)))
-    (some cross-points (empty-cells board))))
+    (some cross-points (brd/empty-cells board))))
 
 (defn- prevent-corner-trap 
   "Returns a move that will prevent the opponent from moving into a corner
@@ -58,10 +58,10 @@
   (first (find-trappable-corners board mark)))
 
 (defn- move-to-corner [board]
-  (some corners (empty-cells board)))
+  (some corners (brd/empty-cells board)))
 
 (defn- move-to-first-empty [board]
-  (first (empty-cells board)))
+  (first (brd/empty-cells board)))
 
 (defn find-computer-move 
   "Returns the index of the first available move for the computer according
