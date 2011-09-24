@@ -1,1 +1,2 @@
-Simple text-based Tic Tac Toe game.
+You can run the current compiled version by cloning the repo and opening index.html
+
