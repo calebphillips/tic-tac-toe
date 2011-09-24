@@ -16,6 +16,12 @@
         font-family: arial;
       }
 
+      table {
+        border: 1px solid #aaa;
+        padding: 10px 10px 10px 10px;
+        display: inline-block;
+      }
+
       td {
         text-align: center;
         width: 100px;
@@ -58,10 +64,9 @@
       }
 
       #messages {
-        margin-top: 20px;
-        border: 1px solid black;
-        width: 300px;
-        min-height: 30px;
+        display: inline-block;
+        margin-left: 50px;
+        vertical-align: top;
       }
     </style>
     <!--[if lt IE 9]>
@@ -92,12 +97,12 @@
 
     <div id="messages"></div>
 
-    <div id="content">
+    <div>
       <script type="text/javascript" src="out/goog/base.js"></script>
       <script type="text/javascript" src="tic-tac-toe.js"></script>
       <script type="text/javascript">
         goog.require('tic_tac_toe.web');
-      </script>
-  </body>
+        </script>
+      </body>
 </html>
 

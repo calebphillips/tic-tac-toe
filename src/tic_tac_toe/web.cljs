@@ -27,10 +27,10 @@
                          :o)]
     (reset! board-state after-computer-move)))
 
-(defn display-message [s]
+(defn msg [& rest]
   (gdom/setTextContent 
     (dom/get-element "messages")
-    s))
+    (apply str rest)))
 
 (defn listen-for-click [e]
   (events/listen
@@ -44,15 +44,25 @@
       (do 
         ; A little weird here, removing and re-adding if the cell is empty
         (events/removeAll e "click")
-        (if (nil? value)
+        (if (and (nil? value) (brd/moves-remaining? @board-state))
           (listen-for-click e)
           (gdom/setTextContent e (name value)))))))
 
+(defn report-on-move [move]
+  (let [winner (brd/winner @board-state)
+        tie (brd/tie? @board-state)
+        message (cond
+                  winner (str (name winner) " has won the game.")
+                  tie (str "The game has ended in a tie")
+                  :else (str "Moved to " (inc move)))]
+    (msg message)))
+
 (defn create-move-listener [e]
-  #(do 
-     (record-move (click->move e))
-     (render-board @board-state)
-     (display-message (str "Moved to " (.id e)))))
+  (let [move (click->move e)]
+    #(do 
+       (record-move move)
+       (render-board @board-state)
+       (report-on-move move))))
 
 (defn start-app []    
   (render-board @board-state))
