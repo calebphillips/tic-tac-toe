@@ -12,19 +12,15 @@
 
 (def board-state (atom (brd/init-board)))
 
-(defn- dump-board [board]
-  (str/join "," (map (fn [s] (if s (name s) "EMPTY")) board)))
-
-(defn- click->move [e]
+(defn- elt->move [e]
   (js/parseInt (last (.id e))))
 
 (defn- record-move [move]
-  (let [after-human-move 
-        (brd/move-player @board-state move :x)
-        after-computer-move 
-        (brd/move-player after-human-move 
-                         (defense/find-computer-move after-human-move :o) 
-                         :o)]
+  (let [after-human-move (brd/move-player @board-state move :x)
+        after-computer-move (brd/move-player 
+                              after-human-move 
+                              (defense/find-computer-move after-human-move :o) 
+                              :o)]
     (reset! board-state after-computer-move)))
 
 (defn- show-msg [& rest]
@@ -32,11 +28,11 @@
     (dom/get-element "messages")
     (apply str rest)))
 
-(defn- listen-for-click [e]
+(defn- listen-for-click [elt]
   (events/listen
-    e
+    elt
     "click"
-    (create-move-listener e)))
+    (create-move-listener elt)))
 
 (defn- nth-cell [n]
   (dom/get-element (str "square" n)))
@@ -60,8 +56,8 @@
                   :else (str "Moved to " (inc move)))]
     (show-msg message)))
 
-(defn- create-move-listener [e]
-  (let [move (click->move e)]
+(defn- create-move-listener [elt]
+  (let [move (elt->move elt)]
     #(do 
        (record-move move)
        (render-board @board-state)
