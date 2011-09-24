@@ -12,13 +12,13 @@
 
 (def board-state (atom (brd/init-board)))
 
-(defn dump-board [board]
+(defn- dump-board [board]
   (str/join "," (map (fn [s] (if s (name s) "EMPTY")) board)))
 
-(defn click->move [e]
+(defn- click->move [e]
   (js/parseInt (last (.id e))))
 
-(defn record-move [move]
+(defn- record-move [move]
   (let [after-human-move 
         (brd/move-player @board-state move :x)
         after-computer-move 
@@ -27,37 +27,40 @@
                          :o)]
     (reset! board-state after-computer-move)))
 
-(defn msg [& rest]
+(defn- show-msg [& rest]
   (gdom/setTextContent 
     (dom/get-element "messages")
     (apply str rest)))
 
-(defn listen-for-click [e]
+(defn- listen-for-click [e]
   (events/listen
     e
     "click"
     (create-move-listener e)))
 
-(defn render-board [b]
+(defn- nth-cell [n]
+  (dom/get-element (str "square" n)))
+
+(defn- render-board [b]
   (doseq [[index value] (brd/indexed-board b)]
-    (let [e (dom/get-element (str "square" index))]
+    (let [elt (nth-cell index)]
       (do 
         ; A little weird here, removing and re-adding if the cell is empty
-        (events/removeAll e "click")
+        (events/removeAll elt "click")
         (if (and (nil? value) (brd/moves-remaining? @board-state))
-          (listen-for-click e)
-          (gdom/setTextContent e (name value)))))))
+          (listen-for-click elt)
+          (gdom/setTextContent elt (name value)))))))
 
-(defn report-on-move [move]
+(defn- report-on-move [move]
   (let [winner (brd/winner @board-state)
         tie (brd/tie? @board-state)
         message (cond
                   winner (str (name winner) " has won the game.")
                   tie (str "The game has ended in a tie")
                   :else (str "Moved to " (inc move)))]
-    (msg message)))
+    (show-msg message)))
 
-(defn create-move-listener [e]
+(defn- create-move-listener [e]
   (let [move (click->move e)]
     #(do 
        (record-move move)
