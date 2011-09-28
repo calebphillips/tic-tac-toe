@@ -38,21 +38,19 @@
 (defn- nth-cell [n]
   (dom/get-element (str "square" n)))
 
+(defn- marked-cell [elt index value ws]
+  (when (some #{index} ws)
+    (gstyle/add elt "win"))
+  (gdom/setTextContent elt (name value)))
+
 (defn- render-board [b]
-  (let [won (brd/winner @board-state)]
+  (let [ws (brd/winning-seq @board-state)]
     (doseq [[index value] (brd/indexed-board b)]
       (let [elt (nth-cell index)]
-        (do 
-          ; A little weird here, removing and re-adding if the cell is empty
-          (events/removeAll elt "click")
-          (if won
-            (let [ws (brd/winning-seq @board-state)]
-              (when (some #{index} ws)
-                (gstyle/add elt "win"))
-              (gdom/setTextContent elt (name value)))
-            (if (and (nil? value) (brd/moves-remaining? @board-state))
-              (listen-for-click elt)
-              (gdom/setTextContent elt (name value)))))))))
+        (events/removeAll elt "click")
+        (if (and (nil? value) (brd/moves-remaining? @board-state))
+          (listen-for-click elt)
+          (marked-cell elt index value ws))))))
 
 (defn- report-on-move [move]
   (let [winner (brd/winner @board-state)
