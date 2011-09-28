@@ -1,5 +1,7 @@
 (ns tic-tac-toe.board)
 
+(def wins #{[:x :x :x] [:o :o :o]})
+
 (defn init-board []
   (vec (repeat 9 nil)))
 
@@ -23,11 +25,19 @@
   "Returns the keyword for the winner, if any, otherwise returns nil"
   [board]
   (first 
-    (some #{[:x :x :x] [:o :o :o]}
+    (some wins
           (concat (rows board) (columns board) (diagonals board)))))
 
 (defn- indexed-board [board]
   (map vector (iterate inc 0) board))
+
+(defn winning-seq
+  [board]
+  (let [ib (indexed-board board)
+        seqs (concat (rows ib) (columns ib) (diagonals ib))]
+    (first
+      (for [r seqs :when (wins (map second r))] 
+        (map first r)))))
 
 (defn empty-cells [board] 
   (map first (filter #(nil? (second %)) (indexed-board board))))

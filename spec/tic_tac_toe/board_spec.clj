@@ -161,3 +161,29 @@
       (should-throw IllegalArgumentException "That space is already taken."
                     (move-player [:x nil nil nil nil nil nil nil nil] 0 :o))))
 
+(describe
+  "Determining the winning sequence"
+  (it "returns the correct value for row wins"
+      (should= [0 1 2] 
+               (winning-seq [:x :x :x 
+                             :o :o nil 
+                             nil nil nil]))
+      (should= [3 4 5] 
+               (winning-seq [:o :x :x 
+                             :o :o :o 
+                             nil :x nil]))
+      (should= [6 7 8] 
+               (winning-seq [:o :x :x 
+                             :o nil nil 
+                             :x :x :x])))
+  (it "returns the correct value for column wins"
+      (should= [0 3 6]
+               (winning-seq [:o nil :x
+                             :o :x nil
+                             :o nil nil])))
+  (it "returns the correct value for diagonal wins"
+      (should= [6 4 2]
+               (winning-seq [nil nil :x
+                             nil :x nil
+                             :x nil nil])))
+  )
