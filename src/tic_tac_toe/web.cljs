@@ -3,6 +3,7 @@
             [goog.events :as events]
             [goog.dom.classes :as gcl]
             [goog.dom :as gdom]
+            [goog.dom.classes :as gstyle]
             [goog.array :as arr]
             [clojure.browser.dom :as dom]
             [tic-tac-toe.board :as brd]
@@ -38,14 +39,20 @@
   (dom/get-element (str "square" n)))
 
 (defn- render-board [b]
-  (doseq [[index value] (brd/indexed-board b)]
-    (let [elt (nth-cell index)]
-      (do 
-        ; A little weird here, removing and re-adding if the cell is empty
-        (events/removeAll elt "click")
-        (if (and (nil? value) (brd/moves-remaining? @board-state))
-          (listen-for-click elt)
-          (gdom/setTextContent elt (name value)))))))
+  (let [won (brd/winner @board-state)]
+    (doseq [[index value] (brd/indexed-board b)]
+      (let [elt (nth-cell index)]
+        (do 
+          ; A little weird here, removing and re-adding if the cell is empty
+          (events/removeAll elt "click")
+          (if won
+            (let [ws (brd/winning-seq @board-state)]
+              (when (some #{index} ws)
+                (gstyle/add elt "win"))
+              (gdom/setTextContent elt (name value)))
+            (if (and (nil? value) (brd/moves-remaining? @board-state))
+              (listen-for-click elt)
+              (gdom/setTextContent elt (name value)))))))))
 
 (defn- report-on-move [move]
   (let [winner (brd/winner @board-state)
