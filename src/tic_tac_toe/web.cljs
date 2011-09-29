@@ -38,23 +38,30 @@
 (defn- nth-cell [n]
   (dom/get-element (str "square" n)))
 
-(defn- marked-cell [elt index value ws]
+(defn- render-mark [elt index value ws]
   (when (some #{index} ws)
     (gstyle/add elt "win"))
   (gdom/setTextContent elt (name value)))
 
-(defn- render-board [b]
-  (let [ws (brd/winning-seq @board-state)]
-    (doseq [[index value] (brd/indexed-board b)]
-      (let [elt (nth-cell index)]
-        (events/removeAll elt "click")
-        (if (and (nil? value) (brd/moves-remaining? @board-state))
-          (listen-for-click elt)
-          (marked-cell elt index value ws))))))
+(defn with-index-and-elt [b]
+  (map (fn [[i v]] 
+         [i v (nth-cell i)]) 
+       (brd/indexed-board b)))
 
-(defn- report-on-move [move]
-  (let [winner (brd/winner @board-state)
-        tie (brd/tie? @board-state)
+(defn- setup-listeners [b]
+  (doseq [[_ _ elt] (with-index-and-elt b)]
+    (listen-for-click elt)))
+
+(defn- render-board [b]
+  (let [ws (brd/winning-seq b)]
+    (doseq [[index value elt] (with-index-and-elt b)]
+      (when value
+        (events/removeAll elt "click")
+        (render-mark elt index value ws)))))
+
+(defn- report-on-move [move board]
+  (let [winner (brd/winner board)
+        tie (brd/tie? board)
         message (cond
                   winner (str (name winner) " has won the game.")
                   tie (str "The game has ended in a tie")
@@ -66,10 +73,10 @@
     #(do 
        (record-move move)
        (render-board @board-state)
-       (report-on-move move))))
+       (report-on-move move @board-state))))
 
 (defn start-app []    
-  (render-board @board-state))
+  (setup-listeners @board-state))
 
 (start-app)
 
