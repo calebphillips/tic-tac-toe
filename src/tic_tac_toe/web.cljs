@@ -48,21 +48,31 @@
          [i v (nth-cell i)])
        (brd/indexed-board b)))
 
+(defn do-elt-seq [f b]
+  (doseq [[index value elt] (with-index-and-elt b)]
+    (f index value elt)))
+
 (defn- setup-listeners [b]
-  (doseq [[_ _ elt] (with-index-and-elt b)]
-    (listen-for-click elt)))
+  (do-elt-seq
+   (fn [_ _ elt]
+     (listen-for-click elt))
+   b))
 
 (defn update-listeners [b]
   (let [game-over? (not (brd/moves-remaining? b))]
-    (doseq [[_ value elt] (with-index-and-elt b)]
-      (when (or game-over? value)
-        (events/removeAll elt "click")))))
+    (do-elt-seq
+     (fn [_ value elt]
+       (when (or game-over? value)
+         (events/removeAll elt "click")))
+     b)))
 
 (defn- render-board [b]
   (let [ws (brd/winning-seq b)]
-    (doseq [[index value elt] (with-index-and-elt b)]
-      (when value
-        (render-mark elt index value ws)))))
+    (do-elt-seq
+     (fn [index value elt]
+       (when value
+         (render-mark elt index value ws)))
+     b)))
 
 (defn- report-on-move [move board]
   (let [winner (brd/winner board)
